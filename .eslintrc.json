@@ -1,0 +1,51 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:vue/vue3-essential",
+    "prettier"
+  ],
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "parser": "@typescript-eslint/parser",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "vue"],
+  "rules": {
+    // 关闭禁止使用 @ts-ignore 的规则
+    "@typescript-eslint/ban-ts-ignore": "off",
+    // 关闭强制函数显式返回类型的规则
+    "@typescript-eslint/explicit-function-return-type": "off",
+    // 关闭禁止使用 any 类型的规则 warn error
+    "@typescript-eslint/no-explicit-any": "off",
+    // 关闭禁止使用 require() 函数的规则
+    "@typescript-eslint/no-var-requires": "off",
+    // 关闭禁止空函数的规则
+    "@typescript-eslint/no-empty-function": "off",
+    // 关闭禁止定义前使用的规则
+    "@typescript-eslint/no-use-before-define": "off",
+    // 关闭禁止使用 @ts-comment 的规则
+    "@typescript-eslint/ban-ts-comment": "off",
+    // 关闭禁止使用特定类型的规则
+    "@typescript-eslint/ban-types": "off",
+    // 关闭非空断言运算符的规则
+    "@typescript-eslint/no-non-null-assertion": "off",
+    // 关闭在导出函数和类之外导出的规则
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    // 禁止重复声明变量的规则
+    "@typescript-eslint/no-redeclare": "error",
+    // 关闭短路表达式中可能导致不可选链访问的规则
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    // 检测未使用变量的规则，error 代表检测出未使用变量时会抛出错误
+    "@typescript-eslint/no-unused-vars": [2],
+    // 关闭模板中只包含一个根元素的规则
+    "no-multiple-template-root": "off"
+  }
+}

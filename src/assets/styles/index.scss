@@ -1,0 +1,28 @@
+@import './variables.module.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0;
+  border-radius: 3px;
+}
+
+/* fade-transform */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .5s;
+}
+
+.fade-transform-enter-from,
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
