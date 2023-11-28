@@ -16,32 +16,32 @@
     </el-form>
 
     <div class="mb-2 flex justify-between">
-      <el-button v-hasPermi="['system:dept:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-      <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
+      <el-button plain type="primary" icon="Plus" v-hasPermi="['system:dept:add']" @click="handleAdd">新增</el-button>
+      <el-button plain type="info" icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
     <el-table border v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
-      <el-table-column align="center" prop="orderNum" label="排序" width="200"></el-table-column>
-      <el-table-column align="center" prop="status" label="状态" width="100">
-        <template #default="scope">
-          <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+      <el-table-column align="center" show-overflow-tooltip prop="orderNum" label="排序" width="200"></el-table-column>
+      <el-table-column align="center" show-overflow-tooltip prop="status" label="状态" width="100">
+        <template #default="{row}">
+          <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
-      <el-table-column align="center" label="操作" :min-width="140">
-        <template #default="scope">
-          <el-button v-hasPermi="['system:dept:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button v-hasPermi="['system:dept:add']" link type="primary" icon="Plus" @click="handleAdd(scope.row)">新增</el-button>
-          <el-button v-if="scope.row.parentId != 0" v-hasPermi="['system:dept:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
+        <template #default="{row}">
+          <el-button link type="primary" icon="Plus" v-hasPermi="['system:dept:add']" @click="handleAdd(row)">新增</el-button>
+          <el-button link type="success" icon="Edit" v-hasPermi="['system:dept:edit']" @click="handleUpdate(row)">修改</el-button>
+          <el-button link type="danger" icon="Delete" v-if="row.parentId != 0" v-hasPermi="['system:dept:remove']" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 添加或修改部门对话框 -->
     <el-dialog v-model="open" :title="title" width="600px" append-to-body draggable>
-      <el-form ref="deptRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col v-if="form.parentId !== 0" :span="24">
             <el-form-item label="上级部门" prop="parentId">
@@ -105,7 +105,7 @@ import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild }
 import { FormInstance } from 'element-plus'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const deptRef = ref<FormInstance>()
+const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const deptList = ref<any[]>([])
@@ -117,23 +117,15 @@ const deptOptions = ref<any[]>([])
 const isExpandAll = ref(true)
 const refreshTable = ref(true)
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: {},
-  rules: {
-    parentId: [{ required: true, message: '上级部门不能为空', trigger: 'blur' }],
-    deptName: [{ required: true, message: '部门名称不能为空', trigger: 'blur' }],
-    orderNum: [{ required: true, message: '显示排序不能为空', trigger: 'blur' }],
-    email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }],
-    phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'blur' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({})
+const rules = ref<any>({
+  parentId: [{ required: true, message: '上级部门不能为空', trigger: 'change' }],
+  deptName: [{ required: true, message: '部门名称不能为空', trigger: 'change' }],
+  orderNum: [{ required: true, message: '显示排序不能为空', trigger: 'change' }],
+  email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }],
+  phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 查询部门列表 */
 async function getList() {
@@ -153,7 +145,7 @@ function reset() {
     orderNum: 0,
     status: '0'
   }
-  proxy.resetForm('deptRef')
+  proxy.resetForm('formRef')
 }
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -173,7 +165,7 @@ async function handleAdd(row: any) {
     form.value.parentId = row.deptId
   }
   open.value = true
-  title.value = '添加部门'
+  title.value = '新增'
 }
 /** 展开/折叠操作 */
 function toggleExpandAll() {
@@ -191,16 +183,16 @@ async function handleUpdate(row: any) {
   const response: any = await getDept(row.deptId)
   form.value = response.data
   open.value = true
-  title.value = '修改部门'
+  title.value = '修改'
 }
 /** 提交按钮 */
 async function submitForm() {
-  await deptRef.value.validate()
+  await formRef.value.validate()
   if (form.value.deptId !== undefined) {
     await updateDept(form.value)
     proxy.$modal.msgSuccess('修改成功')
   } else {
-    await addDept(form.value)
+    await addDept(form.value);
     proxy.$modal.msgSuccess('新增成功')
   }
   open.value = false

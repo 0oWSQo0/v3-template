@@ -33,33 +33,33 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务名称" align="center" prop="jobName" show-overflow-tooltip />
       <el-table-column label="任务组名" align="center" prop="jobGroup">
-        <template #default="scope">
-          <dict-tag :options="sys_job_group" :value="scope.row.jobGroup" />
+        <template #default="{ row }">
+          <dict-tag :options="sys_job_group" :value="row.jobGroup" />
         </template>
       </el-table-column>
       <el-table-column label="调用目标字符串" align="center" prop="invokeTarget" show-overflow-tooltip />
       <el-table-column label="cron执行表达式" align="center" prop="cronExpression" show-overflow-tooltip />
       <el-table-column label="状态" align="center">
-        <template #default="scope">
-          <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
+        <template #default="{ row }">
+          <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="140">
-        <template #default="scope">
+        <template #default="{ row }">
           <el-tooltip content="修改" placement="top">
-            <el-button v-hasPermi="['monitor:job:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)"></el-button>
+            <el-button link v-hasPermi="['monitor:job:edit']" type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
-            <el-button v-hasPermi="['monitor:job:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
+            <el-button link v-hasPermi="['monitor:job:remove']" type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
           </el-tooltip>
           <el-tooltip content="执行一次" placement="top">
-            <el-button v-hasPermi="['monitor:job:changeStatus']" link type="primary" icon="CaretRight" @click="handleRun(scope.row)"></el-button>
+            <el-button link v-hasPermi="['monitor:job:changeStatus']" type="primary" icon="CaretRight" @click="handleRun(row)"></el-button>
           </el-tooltip>
           <el-tooltip content="任务详细" placement="top">
-            <el-button v-hasPermi="['monitor:job:query']" link type="primary" icon="View" @click="handleView(scope.row)"></el-button>
+            <el-button link v-hasPermi="['monitor:job:query']" type="primary" icon="View" @click="handleView(row)"></el-button>
           </el-tooltip>
           <el-tooltip content="调度日志" placement="top">
-            <el-button v-hasPermi="['monitor:job:query']" link type="primary" icon="Operation" @click="handleJobLog(scope.row)"></el-button>
+            <el-button link v-hasPermi="['monitor:job:query']" type="primary" icon="Operation" @click="handleJobLog(row)"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -224,21 +224,13 @@ const openView = ref(false)
 const openCron = ref(false)
 const expression = ref('')
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: { pageNum: 1, pageSize: 10 },
-  rules: {
-    jobName: [{ required: true, message: '任务名称不能为空', trigger: 'blur' }],
-    invokeTarget: [{ required: true, message: '调用目标字符串不能为空', trigger: 'blur' }],
-    cronExpression: [{ required: true, message: 'cron执行表达式不能为空', trigger: 'change' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const rules = ref<any>({
+  jobName: [{ required: true, message: '任务名称不能为空', trigger: 'change' }],
+  invokeTarget: [{ required: true, message: '调用目标字符串不能为空', trigger: 'change' }],
+  cronExpression: [{ required: true, message: 'cron执行表达式不能为空', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 查询定时任务列表 */
 async function getList() {
@@ -324,7 +316,7 @@ function handleJobLog(row: any) {
 function handleAdd() {
   reset()
   open.value = true
-  title.value = '添加任务'
+  title.value = '新增'
 }
 /** 修改按钮操作 */
 async function handleUpdate(row: any) {
@@ -333,7 +325,7 @@ async function handleUpdate(row: any) {
   const res = await getJob(jobId)
   form.value = res.data
   open.value = true
-  title.value = '修改任务'
+  title.value = '修改'
 }
 /** 提交按钮 */
 async function submitForm() {

@@ -26,20 +26,20 @@
     </div>
 
     <el-table border v-loading="loading" :data="postList" @selectionChange="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="岗位编码" align="center" prop="postCode" />
-      <el-table-column label="岗位名称" align="center" prop="postName" />
-      <el-table-column label="岗位排序" align="center" prop="postSort" />
-      <el-table-column label="状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+      <el-table-column align="center" type="selection" width="55" />
+      <el-table-column align="center" show-overflow-tooltip label="岗位编码" prop="postCode" />
+      <el-table-column align="center" show-overflow-tooltip label="岗位名称" prop="postName" />
+      <el-table-column align="center" show-overflow-tooltip label="岗位排序" prop="postSort" />
+      <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
+        <template #default="{row}">
+          <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="170" />
-      <el-table-column label="操作" align="center" width="160">
-        <template #default="scope">
-          <el-button v-hasPermi="['system:post:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button v-hasPermi="['system:post:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" show-overflow-tooltip label="操作" width="160">
+        <template #default="{row}">
+          <el-button link v-hasPermi="['system:post:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
+          <el-button link v-hasPermi="['system:post:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -48,7 +48,7 @@
 
     <!-- 添加或修改岗位对话框 -->
     <el-dialog v-model="open" :title="title" width="500px" append-to-body draggable>
-      <el-form ref="postRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="岗位名称" prop="postName">
           <el-input v-model="form.postName" placeholder="请输入岗位名称" />
         </el-form-item>
@@ -80,8 +80,8 @@
 <script setup name="Post" lang="ts">
 import { listPost, addPost, delPost, getPost, updatePost } from '@/api/system/post'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const postRef = ref<FormInstance>()
+const { proxy } = getCurrentInstance()
+const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const postList = ref<any[]>([])
@@ -94,21 +94,13 @@ const multiple = ref(true)
 const total = ref(0)
 const title = ref('')
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: { pageNum: 1, pageSize: 10 },
-  rules: {
-    postName: [{ required: true, message: '岗位名称不能为空', trigger: 'blur' }],
-    postCode: [{ required: true, message: '岗位编码不能为空', trigger: 'blur' }],
-    postSort: [{ required: true, message: '岗位顺序不能为空', trigger: 'blur' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const rules = ref<any>({
+  postName: [{ required: true, message: '岗位名称不能为空', trigger: 'change' }],
+  postCode: [{ required: true, message: '岗位编码不能为空', trigger: 'change' }],
+  postSort: [{ required: true, message: '岗位顺序不能为空', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 查询岗位列表 */
 async function getList() {
@@ -145,26 +137,25 @@ function reset() {
     postSort: 0,
     status: '0'
   }
-  proxy.resetForm('postRef')
+  proxy.resetForm('formRef')
 }
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
   open.value = true
-  title.value = '添加岗位'
+  title.value = '新增'
 }
 /** 修改按钮操作 */
 async function handleUpdate(row: any) {
   reset()
-  const postId = row.postId || ids.value
-  const res = await getPost(postId)
+  const res = await getPost(row.postId || ids.value)
   form.value = res.data
   open.value = true
-  title.value = '修改岗位'
+  title.value = '修改'
 }
 /** 提交按钮 */
 async function submitForm() {
-  await postRef.value.validate()
+  await formRef.value.validate()
   if (form.value.postId !== undefined) {
     await updatePost(form.value)
     proxy.$modal.msgSuccess('修改成功')
@@ -177,11 +168,10 @@ async function submitForm() {
 }
 /** 删除按钮操作 */
 async function handleDelete(row: any) {
-  const postIds = row.postId || ids.value
   await proxy.$modal.confirm('是否确认删除岗位?')
-  await delPost(postIds)
-  getList()
+  await delPost(row.postId || ids.value)
   proxy.$modal.msgSuccess('删除成功')
+  getList()
 }
 
 getList()

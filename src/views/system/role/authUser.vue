@@ -27,14 +27,14 @@
       <el-table-column align="center" label="邮箱" prop="email" show-overflow-tooltip />
       <el-table-column align="center" label="手机" prop="phonenumber" show-overflow-tooltip />
       <el-table-column align="center" label="状态" prop="status">
-        <template #default="scope">
-          <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+        <template #default="{row}">
+          <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
       <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
       <el-table-column align="center" label="操作"  :min-width="140">
-        <template #default="scope">
-          <el-button v-hasPermi="['system:role:remove']" link type="primary" icon="CircleClose" @click="cancelAuthUser(scope.row)">取消授权</el-button>
+        <template #default="{row}">
+          <el-button v-hasPermi="['system:role:remove']" link type="primary" icon="CircleClose" @click="cancelAuthUser(row)">取消授权</el-button>
         </template>
       </el-table-column>
     </el-table>

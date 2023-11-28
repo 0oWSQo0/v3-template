@@ -1,5 +1,6 @@
 import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import IconsResolver from 'unplugin-icons/resolver'
 
 export default function createAutoImport() {
   return AutoImport({
@@ -19,7 +20,7 @@ export default function createAutoImport() {
         type: true
       }
     ],
-    resolvers: [ElementPlusResolver()],
+    resolvers: [ElementPlusResolver(), IconsResolver()],
     dts: 'src/auto-imports.d.ts'
   })
 }

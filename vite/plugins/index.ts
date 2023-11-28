@@ -5,6 +5,7 @@ import createComponents from './components'
 import createCompression from './compression'
 import createSetupExtend from './setup-extend'
 import createSvgIcon from './svg-icon'
+import Icons from 'unplugin-icons/vite'
 
 export default function createVitePlugins(viteEnv: Record<string, string>, isBuild = false) {
   const vitePlugins: PluginOption[] = [
@@ -12,7 +13,8 @@ export default function createVitePlugins(viteEnv: Record<string, string>, isBui
     createAutoImport(),
     createComponents(),
     createSetupExtend(),
-    createSvgIcon(isBuild)
+    createSvgIcon(isBuild),
+    Icons({ autoInstall: true })
   ]
   isBuild && vitePlugins.push(...createCompression(viteEnv))
   return vitePlugins

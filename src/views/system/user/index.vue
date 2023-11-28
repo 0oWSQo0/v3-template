@@ -52,23 +52,23 @@
 
         <el-table border v-loading="loading" :data="userList" @selectionChange="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column v-if="columns[0].visible" key="userName" label="用户名称" align="center" prop="userName" show-overflow-tooltip />
-          <el-table-column v-if="columns[1].visible" key="nickName" label="用户昵称" align="center" prop="nickName" show-overflow-tooltip />
-          <el-table-column v-if="columns[2].visible" key="deptName" label="部门" align="center" prop="dept.deptName" show-overflow-tooltip />
-          <el-table-column v-if="columns[3].visible" key="phonenumber" label="手机号码" align="center" prop="phonenumber" width="120" />
-          <el-table-column v-if="columns[4].visible" key="status" label="状态" align="center">
-            <template #default="scope">
-              <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
+          <el-table-column align="center" show-overflow-tooltip v-if="columns[0].visible" key="userName" label="用户名称" prop="userName" />
+          <el-table-column align="center" show-overflow-tooltip v-if="columns[1].visible" key="nickName" label="用户昵称" prop="nickName" />
+          <el-table-column align="center" show-overflow-tooltip v-if="columns[2].visible" key="deptName" label="部门" prop="dept.deptName" />
+          <el-table-column align="center" show-overflow-tooltip v-if="columns[3].visible" key="phonenumber" label="手机号码" prop="phonenumber" width="120" />
+          <el-table-column align="center" show-overflow-tooltip v-if="columns[4].visible" key="status" label="状态">
+            <template #default="{row}">
+              <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[5].visible" label="创建时间" align="center" prop="createTime" width="170" />
-          <el-table-column label="操作" align="center" width="300">
-            <template #default="scope">
-              <template v-if="scope.row.userId !== 1">
-                <el-button v-hasPermi="['system:user:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-                <el-button v-hasPermi="['system:user:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-                <el-button v-hasPermi="['system:user:resetPwd']" link type="primary" icon="Key" @click="handleResetPwd(scope.row)">重置密码</el-button>
-                <el-button v-hasPermi="['system:user:edit']" link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)">分配角色</el-button>
+          <el-table-column align="center" show-overflow-tooltip v-if="columns[5].visible" label="创建时间" prop="createTime" width="170" />
+          <el-table-column align="center" show-overflow-tooltip label="操作" width="300">
+            <template #default="{row}">
+              <template v-if="row.userId !== 1">
+                <el-button link v-hasPermi="['system:user:edit']" type="primary" icon="Edit" @click="handleUpdate(row)">修改</el-button>
+                <el-button link v-hasPermi="['system:user:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
+                <el-button link v-hasPermi="['system:user:resetPwd']" type="primary" icon="Key" @click="handleResetPwd(row)">重置密码</el-button>
+                <el-button link v-hasPermi="['system:user:edit']" type="primary" icon="CircleCheck" @click="handleAuthRole(row)">分配角色</el-button>
               </template>
             </template>
           </el-table-column>
@@ -79,7 +79,7 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog v-model="open" :title="title" width="600px" append-to-body draggable>
-      <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
@@ -163,50 +163,16 @@
         </div>
       </template>
     </el-dialog>
-
-    <!-- 用户导入对话框 -->
-    <el-dialog v-model="upload.open" :title="upload.title" width="400px" append-to-body draggable>
-      <el-upload
-        ref="uploadRef"
-        :limit="1"
-        accept=".xlsx, .xls"
-        :headers="upload.headers"
-        :action="upload.url + '?updateSupport=' + upload.updateSupport"
-        :disabled="upload.isUploading"
-        :on-progress="handleFileUploadProgress"
-        :on-success="handleFileSuccess"
-        :auto-upload="false"
-        drag
-      >
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <template #tip>
-          <div class="el-upload__tip text-center">
-            <div class="el-upload__tip"><el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据</div>
-            <span>仅允许导入xls、xlsx格式文件。</span>
-            <el-link type="primary" :underline="false" style="font-size: 12px; vertical-align: baseline" @click="importTemplate">下载模板</el-link>
-          </div>
-        </template>
-      </el-upload>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitFileForm">确 定</el-button>
-          <el-button @click="upload.open = false">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup name="User" lang="ts">
-import { getToken } from '@/utils/auth'
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from '@/api/system/user'
-import { ElTree, FormInstance, UploadInstance } from 'element-plus'
+import { ElTree, FormInstance } from 'element-plus'
 
 const router = useRouter()
-const { proxy } = getCurrentInstance() as ComponentInternalInstance | any
-const userRef = ref<FormInstance>()
-const uploadRef = ref<UploadInstance>()
+const { proxy } = getCurrentInstance() as any
+const formRef = ref<FormInstance>()
 const { sys_normal_disable, sys_user_sex } = proxy.useDict('sys_normal_disable', 'sys_user_sex')
 const deptTreeRef = ref<InstanceType<typeof ElTree>>()
 const userList = ref<any[]>([])
@@ -223,21 +189,7 @@ const deptName = ref('')
 const deptOptions = ref(undefined)
 const postOptions = ref<any[]>([])
 const roleOptions = ref<any[]>([])
-/*** 用户导入参数 */
-const upload = reactive({
-  // 是否显示弹出层（用户导入）
-  open: false,
-  // 弹出层标题（用户导入）
-  title: '',
-  // 是否禁用上传
-  isUploading: false,
-  // 是否更新已经存在的用户数据
-  updateSupport: 0,
-  // 设置上传的请求头部
-  headers: { Authorization: 'Bearer ' + getToken() },
-  // 上传的地址
-  url: import.meta.env.VITE_APP_BASE_API + '/system/user/importData'
-})
+
 // 列显隐信息
 const columns = ref([
   { key: 0, label: `用户名称`, visible: true },
@@ -248,29 +200,21 @@ const columns = ref([
   { key: 5, label: `创建时间`, visible: true }
 ])
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: { pageNum: 1, pageSize: 10 },
-  rules: {
-    userName: [
-      { required: true, message: '用户名称不能为空', trigger: 'blur' },
-      { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
-    ],
-    nickName: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
-    password: [
-      { required: true, message: '用户密码不能为空', trigger: 'blur' },
-      { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
-    ],
-    email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'blur' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const rules = ref<any>({
+  userName: [
+    { required: true, message: '用户名称不能为空', trigger: 'change' },
+    { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'change' }
+  ],
+  nickName: [{ required: true, message: '用户昵称不能为空', trigger: 'change' }],
+  password: [
+    { required: true, message: '用户密码不能为空', trigger: 'change' },
+    { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'change' }
+  ],
+  email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }],
+  phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 通过条件过滤节点  */
 const filterNode = (value: any, data: any) => {
@@ -320,10 +264,7 @@ async function handleDelete(row: any) {
   getList()
   proxy.$modal.msgSuccess('删除成功')
 }
-/** 导出按钮操作 */
-function handleExport() {
-  proxy.download('system/user/export', { ...queryParams.value }, `user_${new Date().getTime()}.xlsx`)
-}
+
 /** 用户状态修改  */
 async function handleStatusChange(row: any) {
   let text = row.status === '0' ? '启用' : '停用'
@@ -335,19 +276,7 @@ async function handleStatusChange(row: any) {
     row.status = row.status === '0' ? '1' : '0'
   }
 }
-/** 更多操作 */
-// function handleCommand(command: any, row: any) {
-//   switch (command) {
-//     case 'handleResetPwd':
-//       handleResetPwd(row)
-//       break
-//     case 'handleAuthRole':
-//       handleAuthRole(row)
-//       break
-//     default:
-//       break
-//   }
-// }
+
 /** 跳转角色分配 */
 function handleAuthRole(row: any) {
   const userId = row.userId
@@ -371,31 +300,7 @@ function handleSelectionChange(selection: any[]) {
   single.value = selection.length !== 1
   multiple.value = !selection.length
 }
-/** 导入按钮操作 */
-function handleImport() {
-  upload.title = '用户导入'
-  upload.open = true
-}
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download('system/user/importTemplate', {}, `user_template_${new Date().getTime()}.xlsx`)
-}
-/**文件上传中处理 */
-const handleFileUploadProgress = () => {
-  upload.isUploading = true
-}
-/** 文件上传成功处理 */
-const handleFileSuccess = (response: any, file: any) => {
-  upload.open = false
-  upload.isUploading = false
-  uploadRef.value.handleRemove(file)
-  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + '</div>', '导入结果', { dangerouslyUseHTMLString: true })
-  getList()
-}
-/** 提交上传文件 */
-function submitFileForm() {
-  uploadRef.value.submit()
-}
+
 /** 重置操作表单 */
 function reset() {
   form.value = {
@@ -403,7 +308,7 @@ function reset() {
     postIds: [],
     roleIds: []
   }
-  proxy.resetForm('userRef')
+  proxy.resetForm('formRef')
 }
 /** 取消按钮 */
 function cancel() {
@@ -417,25 +322,24 @@ async function handleAdd() {
   postOptions.value = response.posts
   roleOptions.value = response.roles
   open.value = true
-  title.value = '添加用户'
+  title.value = '新增'
 }
 /** 修改按钮操作 */
 async function handleUpdate(row: any) {
   reset()
-  const userId = row.userId || ids.value
-  const response: any = await getUser(userId)
+  const response: any = await getUser(row.userId || ids.value)
   form.value = response.data
   postOptions.value = response.posts
   roleOptions.value = response.roles
   form.value.postIds = response.postIds
   form.value.roleIds = response.roleIds
   open.value = true
-  title.value = '修改用户'
+  title.value = '修改'
   form.value.password = ''
 }
 /** 提交按钮 */
 async function submitForm() {
-  await userRef.value.validate()
+  await formRef.value.validate()
   if (form.value.userId) {
     await updateUser(form.value)
     proxy.$modal.msgSuccess('修改成功')

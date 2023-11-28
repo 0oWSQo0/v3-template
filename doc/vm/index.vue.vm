@@ -63,33 +63,33 @@
 #set($comment=$column.columnComment)
 #end
 #if($column.pk)
-      <el-table-column align="center" label="${comment}" prop="${javaField}" show-overflow-tooltip />
+      <el-table-column align="center" show-overflow-tooltip label="${comment}" prop="${javaField}" />
 #elseif($column.list && $column.htmlType == "datetime")
-      <el-table-column align="center" label="${comment}" prop="${javaField}" width="170" />
+      <el-table-column align="center" show-overflow-tooltip label="${comment}" prop="${javaField}" width="170" />
 #elseif($column.list && $column.htmlType == "imageUpload")
-      <el-table-column align="center" label="${comment}" prop="${javaField}" width="100" show-overflow-tooltip>
-        <template #default="scope">
-          <image-preview :src="scope.row.${javaField}" :width="50" :height="50"/>
+      <el-table-column align="center" show-overflow-tooltip label="${comment}" prop="${javaField}" width="100">
+        <template #default="{ row }">
+          <image-preview :src="row.${javaField}" :width="50" :height="50"/>
         </template>
       </el-table-column>
 #elseif($column.list && "" != $column.dictType)
-      <el-table-column align="center" label="${comment}" prop="${javaField}" show-overflow-tooltip>
-        <template #default="scope">
+      <el-table-column align="center" show-overflow-tooltip label="${comment}" prop="${javaField}">
+        <template #default="{ row }">
 #if($column.htmlType == "checkbox")
-          <dict-tag :options="${column.dictType}" :value="scope.row.${javaField} ? scope.row.${javaField}.split(',') : []"/>
+          <dict-tag :options="${column.dictType}" :value="row.${javaField} ? row.${javaField}.split(',') : []"/>
 #else
-          <dict-tag :options="${column.dictType}" :value="scope.row.${javaField}"/>
+          <dict-tag :options="${column.dictType}" :value="row.${javaField}"/>
 #end
         </template>
       </el-table-column>
 #elseif($column.list && "" != $javaField)
-      <el-table-column align="center" label="${comment}" prop="${javaField}" show-overflow-tooltip />
+      <el-table-column align="center" show-overflow-tooltip label="${comment}" prop="${javaField}" />
 #end
 #end
       <el-table-column align="center" label="操作"  :min-width="140">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['${moduleName}:${businessName}:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['${moduleName}:${businessName}:remove']">删除</el-button>
+        <template #default="{ row }">
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(row)" v-hasPermi="['${moduleName}:${businessName}:edit']">修改</el-button>
+          <el-button link type="danger" icon="Delete" @click="handleDelete(row)" v-hasPermi="['${moduleName}:${businessName}:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -98,7 +98,7 @@
 
     <!-- 添加或修改${functionName}对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body draggable>
-      <el-form ref="${businessName}Ref" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
 #foreach($column in $columns)
 #set($field=$column.javaField)
 #if($column.insert && !$column.pk)
@@ -263,7 +263,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { ${dictsNoSymbol} } = proxy.useDict(${dicts})
 #end
 
-const ${businessName}Ref = ref()
+const formRef = ref()
 const ${businessName}List = ref<any[]>([])
 #if($table.sub)
 const ${subclassName}List = ref<any[]>([])
@@ -286,15 +286,10 @@ const daterange${AttrName} = ref<any[]>([])
 #end
 #end
 
-const data = reactive<{
-  form: any;
-  queryParams: any;
-  rules: any;
-}>({
-  form: {},
-  queryParams: { pageNum: 1, pageSize: 10 },
-  rules: {
-    #foreach ($column in $columns)
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const rules = ref<any>({
+  #foreach ($column in $columns)
 #if($column.required)
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
 #if($parentheseIndex != -1)
@@ -302,17 +297,14 @@ const data = reactive<{
 #else
 #set($comment=$column.columnComment)
 #end
-    $column.javaField: [
-      { required: true, message: '$comment不能为空', trigger: #if($column.htmlType == "select" || $column.htmlType == "radio")'change'#else'change'#end }
-    ]#if($foreach.count != $columns.size()),#end
+  $column.javaField: [
+    { required: true, message: '$comment不能为空', trigger: 'change' }
+  ]#if($foreach.count != $columns.size()),#end
 #end
 #end
-  }
 })
 
-const { queryParams, form, rules } = toRefs(data)
-
-/** 查询${functionName}列表 */
+/** 查询列表 */
 async function getList() {
   loading.value = true
 #foreach ($column in $columns)
@@ -348,7 +340,7 @@ function reset() {
 #if($table.sub)
   ${subclassName}List.value = []
 #end
-  proxy.resetForm("${businessName}Ref")
+  proxy.resetForm("formRef")
 }
 
 /** 搜索按钮操作 */
@@ -380,14 +372,13 @@ function handleSelectionChange(selection: any[]) {
 function handleAdd() {
   reset()
   open.value = true
-  title.value = "添加${functionName}"
+  title.value = "新增"
 }
 
 /** 修改按钮操作 */
 async function handleUpdate(row: any) {
   reset()
-  const _${pkColumn.javaField} = row.${pkColumn.javaField} || ids.value
-  const res: any = await get${BusinessName}(_${pkColumn.javaField})
+  const res: any = await get${BusinessName}(row.${pkColumn.javaField} || ids.value)
   form.value = res.data
 #foreach ($column in $columns)
 #if($column.htmlType == "checkbox")
@@ -398,12 +389,12 @@ async function handleUpdate(row: any) {
   ${subclassName}List.value = res.data.${subclassName}List
 #end
   open.value = true
-  title.value = "修改${functionName}"
+  title.value = "修改"
 }
 
 /** 提交按钮 */
 async function submitForm() {
-  await ${businessName}Ref.value.validate()
+  await formRef.value.validate()
 #foreach ($column in $columns)
 #if($column.htmlType == "checkbox")
   form.value.$column.javaField = form.value.${column.javaField}.join(",")
@@ -425,11 +416,10 @@ async function submitForm() {
 
 /** 删除按钮操作 */
 async function handleDelete(row: any) {
-  const _${pkColumn.javaField}s = row.${pkColumn.javaField} || ids.value
   await proxy.#[[$modal]]#.confirm('是否确认删除${functionName}?')
-  await del${BusinessName}(_${pkColumn.javaField}s)
-  getList()
+  await del${BusinessName}(row.${pkColumn.javaField} || ids.value)
   proxy.#[[$modal]]#.msgSuccess("删除成功")
+  getList()
 }
 
 #if($table.sub)
@@ -474,7 +464,5 @@ function handleExport() {
   proxy.download('${moduleName}/${businessName}/export', queryParams.value, `${businessName}_#[[${new Date().getTime()}]]#.xlsx`)
 }
 
-onMounted(() => {
-  getList()
-})
+getList()
 </script>

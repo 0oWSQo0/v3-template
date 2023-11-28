@@ -31,25 +31,25 @@
 
     <el-table border v-loading="loading" :data="typeList" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
-      <el-table-column align="center" label="字典名称" prop="dictName" show-overflow-tooltip />
-      <el-table-column align="center" label="字典类型" show-overflow-tooltip>
-        <template #default="scope">
-          <router-link :to="'/system/dict-data/index/' + scope.row.dictId">
-            <el-link type="primary">{{ scope.row.dictType }}</el-link>
+      <el-table-column align="center" show-overflow-tooltip label="字典名称" prop="dictName" />
+      <el-table-column align="center" show-overflow-tooltip label="字典类型">
+        <template #default="{row}">
+          <router-link :to="'/system/dict-data/index/' + row.dictId">
+            <el-link type="primary">{{ row.dictType }}</el-link>
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="状态" prop="status">
-        <template #default="scope">
-          <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+      <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
+        <template #default="{row}">
+          <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="备注" prop="remark" show-overflow-tooltip />
-      <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
-      <el-table-column align="center" label="操作" width="140">
-        <template #default="scope">
-          <el-button v-hasPermi="['system:dict:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button v-hasPermi="['system:dict:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+      <el-table-column align="center" show-overflow-tooltip label="备注" prop="remark" />
+      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" show-overflow-tooltip label="操作" width="140">
+        <template #default="{row}">
+          <el-button link v-hasPermi="['system:dict:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
+          <el-button link v-hasPermi="['system:dict:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,7 +58,7 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog v-model="open" :title="title" width="500px" append-to-body draggable>
-      <el-form ref="dictRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="字典名称" prop="dictName">
           <el-input v-model="form.dictName" placeholder="请输入字典名称" />
         </el-form-item>
@@ -88,8 +88,8 @@
 import useDictStore from '@/store/modules/dict'
 import { listType, getType, delType, addType, updateType, refreshCache } from '@/api/system/dict/type'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const dictRef = ref<FormInstance>()
+const { proxy } = getCurrentInstance()
+const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const typeList = ref<any[]>([])
@@ -103,20 +103,12 @@ const total = ref(0)
 const title = ref('')
 const dateRange = ref<any>([])
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: { pageNum: 1, pageSize: 10 },
-  rules: {
-    dictName: [{ required: true, message: '字典名称不能为空', trigger: 'blur' }],
-    dictType: [{ required: true, message: '字典类型不能为空', trigger: 'blur' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const rules = ref<any>({
+  dictName: [{ required: true, message: '字典名称不能为空', trigger: 'change' }],
+  dictType: [{ required: true, message: '字典类型不能为空', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 查询字典类型列表 */
 async function getList() {
@@ -133,10 +125,8 @@ function cancel() {
 }
 /** 表单重置 */
 function reset() {
-  form.value = {
-    status: '0'
-  }
-  proxy.resetForm('dictRef')
+  form.value = { status: '0' }
+  proxy.resetForm('formRef')
 }
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -153,7 +143,7 @@ function resetQuery() {
 function handleAdd() {
   reset()
   open.value = true
-  title.value = '添加字典类型'
+  title.value = '新增'
 }
 /** 多选框选中数据 */
 function handleSelectionChange(selection: any[]) {
@@ -164,15 +154,14 @@ function handleSelectionChange(selection: any[]) {
 /** 修改按钮操作 */
 async function handleUpdate(row: any) {
   reset()
-  const dictId = row.dictId || ids.value
-  const res = await getType(dictId)
+  const res = await getType(row.dictId || ids.value)
   form.value = res.data
   open.value = true
-  title.value = '修改字典类型'
+  title.value = '修改'
 }
 /** 提交按钮 */
 async function submitForm() {
-  await dictRef.value.validate()
+  await formRef.value.validate()
   if (form.value.dictId != undefined) {
     await updateType(form.value)
     proxy.$modal.msgSuccess('修改成功')
@@ -185,11 +174,10 @@ async function submitForm() {
 }
 /** 删除按钮操作 */
 async function handleDelete(row: any) {
-  const dictIds = row.dictId || ids.value
   await proxy.$modal.confirm('是否确认删除数据项？')
-  await delType(dictIds)
-  getList()
+  await delType(row.dictId || ids.value)
   proxy.$modal.msgSuccess('删除成功')
+  getList()
 }
 /** 刷新缓存按钮操作 */
 async function handleRefreshCache() {

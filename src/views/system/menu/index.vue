@@ -26,33 +26,33 @@
     </el-row>
 
     <el-table border v-if="refreshTable" v-loading="loading" :data="menuList" row-key="menuId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-      <el-table-column prop="menuName" label="菜单名称" show-overflow-tooltip width="160"></el-table-column>
-      <el-table-column prop="icon" label="图标" align="center" width="100">
-        <template #default="scope">
-          <svg-icon :icon-class="scope.row.icon" />
+      <el-table-column prop="menuName" show-overflow-tooltip label="菜单名称" width="160"></el-table-column>
+      <el-table-column align="center" show-overflow-tooltip label="图标" prop="icon" width="100">
+        <template #default="{row}">
+          <svg-icon :icon-class="row.icon" />
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="orderNum" label="排序" width="60"></el-table-column>
-      <el-table-column align="center" prop="perms" label="权限标识" show-overflow-tooltip></el-table-column>
-      <el-table-column align="center" prop="component" label="组件路径" show-overflow-tooltip></el-table-column>
-      <el-table-column align="center" prop="status" label="状态" width="80">
-        <template #default="scope">
-          <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+      <el-table-column align="center" show-overflow-tooltip prop="orderNum" label="排序" width="60"></el-table-column>
+      <el-table-column align="center" show-overflow-tooltip prop="perms" label="权限标识"></el-table-column>
+      <el-table-column align="center" show-overflow-tooltip prop="component" label="组件路径"></el-table-column>
+      <el-table-column align="center" show-overflow-tooltip prop="status" label="状态" width="80">
+        <template #default="{row}">
+          <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" width="170" prop="createTime" />
-      <el-table-column align="center" label="操作" width="230" class-name="">
-        <template #default="scope">
-          <el-button v-hasPermi="['system:menu:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button v-hasPermi="['system:menu:add']" link type="primary" icon="Plus" @click="handleAdd(scope.row)">新增</el-button>
-          <el-button v-hasPermi="['system:menu:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+      <el-table-column align="center" show-overflow-tooltip label="创建时间" width="170" prop="createTime" />
+      <el-table-column align="center" show-overflow-tooltip label="操作" width="230">
+        <template #default="{row}">
+          <el-button link v-hasPermi="['system:menu:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
+          <el-button link v-hasPermi="['system:menu:add']" type="primary" icon="Plus" @click="handleAdd(row)">新增</el-button>
+          <el-button link v-hasPermi="['system:menu:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 添加或修改菜单对话框 -->
     <el-dialog v-model="open" :title="title" width="680px" append-to-body draggable>
-      <el-form ref="menuRef" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="上级菜单">
@@ -234,7 +234,7 @@ import IconSelect from '@/components/IconSelect/index.vue'
 import { ClickOutside as vClickOutside } from 'element-plus'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const menuRef = ref<FormInstance>()
+const formRef = ref<FormInstance>()
 const { sys_show_hide, sys_normal_disable } = proxy.useDict('sys_show_hide', 'sys_normal_disable')
 
 const menuList = ref<any[]>([])
@@ -248,21 +248,13 @@ const refreshTable = ref(true)
 const showChooseIcon = ref(false)
 const iconSelectRef = ref<any>(null)
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: {},
-  rules: {
-    menuName: [{ required: true, message: '菜单名称不能为空', trigger: 'blur' }],
-    orderNum: [{ required: true, message: '菜单顺序不能为空', trigger: 'blur' }],
-    path: [{ required: true, message: '路由地址不能为空', trigger: 'blur' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({})
+const rules = ref<any>({
+  menuName: [{ required: true, message: '菜单名称不能为空', trigger: 'change' }],
+  orderNum: [{ required: true, message: '菜单顺序不能为空', trigger: 'change' }],
+  path: [{ required: true, message: '路由地址不能为空', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 查询菜单列表 */
 async function getList() {
@@ -294,7 +286,7 @@ function reset() {
     visible: '0',
     status: '0'
   }
-  proxy.resetForm('menuRef')
+  proxy.resetForm('formRef')
 }
 /** 展示下拉图标 */
 function showSelectIcon() {
@@ -333,7 +325,7 @@ function handleAdd(row: any) {
     form.value.parentId = 0
   }
   open.value = true
-  title.value = '添加菜单'
+  title.value = '新增'
 }
 /** 展开/折叠操作 */
 function toggleExpandAll() {
@@ -350,11 +342,11 @@ async function handleUpdate(row: any) {
   const res: any = await getMenu(row.menuId)
   form.value = res.data
   open.value = true
-  title.value = '修改菜单'
+  title.value = '修改'
 }
 /** 提交按钮 */
 async function submitForm() {
-  await menuRef.value.validate()
+  await formRef.value.validate()
   if (form.value.menuId !== undefined) {
     await updateMenu(form.value)
     proxy.$modal.msgSuccess('修改成功')

@@ -16,16 +16,16 @@
     <el-row>
       <el-table border ref="refTable" :data="userList" height="260px" @rowClick="clickRow" @selectionChange="handleSelectionChange">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column align="center" label="用户名称" prop="userName" show-overflow-tooltip />
-        <el-table-column align="center" label="用户昵称" prop="nickName" show-overflow-tooltip />
-        <el-table-column align="center" label="邮箱" prop="email" show-overflow-tooltip />
-        <el-table-column align="center" label="手机" prop="phonenumber" show-overflow-tooltip />
-        <el-table-column align="center" label="状态" prop="status">
-          <template #default="scope">
-            <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+        <el-table-column align="center" show-overflow-tooltip label="用户名称" prop="userName" />
+        <el-table-column align="center" show-overflow-tooltip label="用户昵称" prop="nickName" />
+        <el-table-column align="center" show-overflow-tooltip label="邮箱" prop="email" />
+        <el-table-column align="center" show-overflow-tooltip label="手机" prop="phonenumber" />
+        <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
+          <template #default="{row}">
+            <dict-tag :options="sys_normal_disable" :value="row.status" />
           </template>
         </el-table-column>
-        <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
+        <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
       </el-table>
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-row>

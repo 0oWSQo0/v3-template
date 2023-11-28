@@ -29,26 +29,26 @@
     </div>
 
     <el-table border v-loading="loading" :data="dataList" @selectionChange="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="字典标签" align="center" prop="dictLabel">
-        <template #default="scope">
-          <span v-if="scope.row.listClass == '' || scope.row.listClass == 'default'">{{ scope.row.dictLabel }}</span>
-          <el-tag v-else :type="scope.row.listClass == 'primary' ? '' : scope.row.listClass">{{ scope.row.dictLabel }}</el-tag>
+      <el-table-column align="center" type="selection" width="55" />
+      <el-table-column align="center" show-overflow-tooltip label="字典标签" prop="dictLabel">
+        <template #default="{row}">
+          <span v-if="row.listClass == '' || row.listClass == 'default'">{{ row.dictLabel }}</span>
+          <el-tag v-else :type="row.listClass == 'primary' ? '' : row.listClass">{{ row.dictLabel }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="字典键值" align="center" prop="dictValue" />
-      <el-table-column label="字典排序" align="center" prop="dictSort" />
-      <el-table-column label="状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+      <el-table-column align="center" show-overflow-tooltip label="字典键值" prop="dictValue" />
+      <el-table-column align="center" show-overflow-tooltip label="字典排序" prop="dictSort" />
+      <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
+        <template #default="{row}">
+          <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" show-overflow-tooltip />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="170" />
-      <el-table-column label="操作" align="center" :min-width="140">
-        <template #default="scope">
-          <el-button v-hasPermi="['system:dict:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button v-hasPermi="['system:dict:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+      <el-table-column align="center" show-overflow-tooltip label="备注" prop="remark" />
+      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
+        <template #default="{row}">
+          <el-button link v-hasPermi="['system:dict:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
+          <el-button link v-hasPermi="['system:dict:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -57,7 +57,7 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog v-model="open" :title="title" width="500px" append-to-body draggable>
-      <el-form ref="dataRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="字典类型">
           <el-input v-model="form.dictType" :disabled="true" />
         </el-form-item>
@@ -103,8 +103,8 @@ import { optionselect as getDictOptionselect, getType } from '@/api/system/dict/
 import { listData, getData, delData, addData, updateData } from '@/api/system/dict/data'
 import { FormInstance } from 'element-plus/es/components/form'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const dataRef = ref<FormInstance>()
+const { proxy } = getCurrentInstance()
+const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const dataList = ref<any[]>([])
@@ -129,21 +129,13 @@ const listClassOptions = ref([
   { value: 'danger', label: '危险' }
 ])
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: { pageNum: 1, pageSize: 10 },
-  rules: {
-    dictLabel: [{ required: true, message: '数据标签不能为空', trigger: 'blur' }],
-    dictValue: [{ required: true, message: '数据键值不能为空', trigger: 'blur' }],
-    dictSort: [{ required: true, message: '数据顺序不能为空', trigger: 'blur' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const rules = ref<any>({
+  dictLabel: [{ required: true, message: '数据标签不能为空', trigger: 'change' }],
+  dictValue: [{ required: true, message: '数据键值不能为空', trigger: 'change' }],
+  dictSort: [{ required: true, message: '数据顺序不能为空', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 查询字典类型详细 */
 async function getTypes(dictId: any) {
@@ -177,7 +169,7 @@ function reset() {
     dictSort: 0,
     status: '0'
   }
-  proxy.resetForm('dataRef')
+  proxy.resetForm('formRef')
 }
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -199,7 +191,7 @@ function resetQuery() {
 function handleAdd() {
   reset()
   open.value = true
-  title.value = '添加字典数据'
+  title.value = '新增'
   form.value.dictType = queryParams.value.dictType
 }
 /** 多选框选中数据 */
@@ -211,15 +203,14 @@ function handleSelectionChange(selection: any[]) {
 /** 修改按钮操作 */
 async function handleUpdate(row: any) {
   reset()
-  const dictCode = row.dictCode || ids.value
-  const res: any = await getData(dictCode)
+  const res: any = await getData(row.dictCode || ids.value)
   form.value = res.data
   open.value = true
-  title.value = '修改字典数据'
+  title.value = '修改'
 }
 /** 提交按钮 */
 async function submitForm() {
-  await dataRef.value.validate()
+  await formRef.value.validate()
   if (form.value.dictCode !== undefined) {
     await updateData(form.value)
     proxy.$modal.msgSuccess('修改成功')
@@ -233,9 +224,8 @@ async function submitForm() {
 }
 /** 删除按钮操作 */
 async function handleDelete(row: any) {
-  const dictCodes = row.dictCode || ids.value
   await proxy.$modal.confirm('是否确认删除字典数据项？')
-  await delData(dictCodes)
+  await delData(row.dictCode || ids.value)
   getList()
   proxy.$modal.msgSuccess('删除成功')
   useDictStore().removeDict(queryParams.value.dictType)

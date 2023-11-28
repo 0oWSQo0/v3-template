@@ -43,21 +43,21 @@
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="系统模块" align="center" prop="title" show-overflow-tooltip />
       <el-table-column label="操作类型" align="center" prop="businessType">
-        <template #default="scope">
-          <dict-tag :options="sys_oper_type" :value="scope.row.businessType" />
+        <template #default="{ row }">
+          <dict-tag :options="sys_oper_type" :value="row.businessType" />
         </template>
       </el-table-column>
       <el-table-column label="操作人员" align="center" width="110" prop="operName" show-overflow-tooltip sortable="custom" :sort-orders="['descending', 'ascending']" />
       <el-table-column label="主机" align="center" prop="operIp" width="150" show-overflow-tooltip />
       <el-table-column label="操作状态" align="center" prop="status" width="80">
-        <template #default="scope">
-          <dict-tag :options="sys_common_status" :value="scope.row.status" />
+        <template #default="{ row }">
+          <dict-tag :options="sys_common_status" :value="row.status" />
         </template>
       </el-table-column>
       <el-table-column label="操作日期" align="center" prop="operTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="170" />
       <el-table-column label="消耗时间" align="center" prop="costTime" width="110" show-overflow-tooltip sortable="custom" :sort-orders="['descending', 'ascending']">
-        <template #default="scope">
-          <span>{{ scope.row.costTime }}毫秒</span>
+        <template #default="{ row }">
+          <span>{{ row.costTime }}毫秒</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="90">
@@ -118,7 +118,7 @@
 
 <script setup name="Operlog" lang="ts">
 import { list } from '@/api/monitor/operlog'
-import { Sort } from 'element-plus/es/components/table/src/table/defaults';
+import { Sort } from 'element-plus/es/components/table/src/table/defaults'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { sys_oper_type, sys_common_status } = proxy.useDict('sys_oper_type', 'sys_common_status')
@@ -133,15 +133,8 @@ const total = ref(0)
 const dateRange = ref<any>([])
 const defaultSort = ref<Sort>({ prop: 'operTime', order: 'descending' })
 
-const data = reactive<{
-  form: any
-  queryParams: any
-}>({
-  form: {},
-  queryParams: { pageNum: 1, pageSize: 10 }
-})
-
-const { queryParams, form } = toRefs(data)
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 
 /** 查询登录日志 */
 async function getList() {

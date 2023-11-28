@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from '@/utils/common'
 
 // 查询列表
 export function listUser(params: any) {
@@ -7,7 +6,7 @@ export function listUser(params: any) {
 }
 // 查询详细
 export function getUser(userId?: any) {
-  return request({ url: '/system/user/' + parseStrEmpty(userId) })
+  return request({ url: '/system/user/' + userId || '' })
 }
 // 新增
 export function addUser(data: any) {

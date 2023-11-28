@@ -32,29 +32,24 @@
     </div>
 
     <el-table border v-loading="loading" :data="jobLogList" @selectionChange="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="日志编号" width="80" align="center" prop="jobLogId" />
-      <el-table-column label="任务名称" align="center" prop="jobName" show-overflow-tooltip />
-      <el-table-column label="任务组名" align="center" prop="jobGroup" show-overflow-tooltip>
-        <template #default="scope">
-          <dict-tag :options="sys_job_group" :value="scope.row.jobGroup" />
+      <el-table-column align="center" type="selection" width="55" />
+      <el-table-column align="center" show-overflow-tooltip label="任务名称" prop="jobName" />
+      <el-table-column align="center" show-overflow-tooltip label="任务组名" prop="jobGroup">
+        <template #default="{row}">
+          <dict-tag :options="sys_job_group" :value="row.jobGroup" />
         </template>
       </el-table-column>
-      <el-table-column label="调用目标字符串" align="center" prop="invokeTarget" show-overflow-tooltip />
-      <el-table-column label="日志信息" align="center" prop="jobMessage" show-overflow-tooltip />
-      <el-table-column label="执行状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :options="sys_common_status" :value="scope.row.status" />
+      <el-table-column align="center" show-overflow-tooltip label="调用目标字符串" prop="invokeTarget" />
+      <el-table-column align="center" show-overflow-tooltip label="日志信息" prop="jobMessage" />
+      <el-table-column align="center" show-overflow-tooltip label="执行状态" prop="status">
+        <template #default="{row}">
+          <dict-tag :options="sys_common_status" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="执行时间" align="center" prop="createTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center"  :min-width="140">
-        <template #default="scope">
-          <el-button v-hasPermi="['monitor:job:query']" link type="primary" icon="View" @click="handleView(scope.row)">详细</el-button>
+      <el-table-column align="center" show-overflow-tooltip label="执行时间" prop="createTime" width="180" />
+      <el-table-column align="center" show-overflow-tooltip label="操作"  :min-width="140">
+        <template #default="{ row }">
+          <el-button link v-hasPermi="['monitor:job:query']" type="primary" icon="View" @click="handleView(row)">详细</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -118,18 +113,9 @@ const total = ref(0)
 const dateRange = ref<any>([])
 const route = useRoute()
 
-const data = reactive<{
-  form: any
-  queryParams: any
-}>({
-  form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10
-  }
-})
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 
-const { queryParams, form } = toRefs(data)
 
 /** 查询调度日志列表 */
 async function getList() {

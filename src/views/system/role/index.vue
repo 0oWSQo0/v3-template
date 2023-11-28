@@ -31,28 +31,28 @@
     <!-- 表格数据 -->
     <el-table border v-loading="loading" :data="roleList" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
-      <el-table-column align="center" label="角色名称" prop="roleName" show-overflow-tooltip width="150" />
-      <el-table-column align="center" label="权限字符" prop="roleKey" show-overflow-tooltip width="150" />
-      <el-table-column align="center" label="显示顺序" prop="roleSort" width="100" />
-      <el-table-column align="center" label="状态" width="100">
-        <template #default="scope">
-          <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
+      <el-table-column align="center" show-overflow-tooltip label="角色名称" prop="roleName" width="150" />
+      <el-table-column align="center" show-overflow-tooltip label="权限字符" prop="roleKey" width="150" />
+      <el-table-column align="center" show-overflow-tooltip label="显示顺序" prop="roleSort" width="100" />
+      <el-table-column align="center" show-overflow-tooltip label="状态" width="100">
+        <template #default="{row}">
+          <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" prop="createTime" />
-      <el-table-column align="center" label="操作" :min-width="140">
-        <template #default="scope">
-          <el-tooltip v-if="scope.row.roleId !== 1" content="修改" placement="top">
-            <el-button v-hasPermi="['system:role:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)"></el-button>
+      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
+        <template #default="{row}">
+          <el-tooltip v-if="row.roleId !== 1" content="修改" placement="top">
+            <el-button link v-hasPermi="['system:role:edit']" type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
           </el-tooltip>
-          <el-tooltip v-if="scope.row.roleId !== 1" content="删除" placement="top">
-            <el-button v-hasPermi="['system:role:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
+          <el-tooltip v-if="row.roleId !== 1" content="删除" placement="top">
+            <el-button link v-hasPermi="['system:role:remove']" type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
           </el-tooltip>
-          <el-tooltip v-if="scope.row.roleId !== 1" content="数据权限" placement="top">
-            <el-button v-hasPermi="['system:role:edit']" link type="primary" icon="CircleCheck" @click="handleDataScope(scope.row)"></el-button>
+          <el-tooltip v-if="row.roleId !== 1" content="数据权限" placement="top">
+            <el-button link v-hasPermi="['system:role:edit']" type="primary" icon="CircleCheck" @click="handleDataScope(row)"></el-button>
           </el-tooltip>
-          <el-tooltip v-if="scope.row.roleId !== 1" content="分配用户" placement="top">
-            <el-button v-hasPermi="['system:role:edit']" link type="primary" icon="User" @click="handleAuthUser(scope.row)"></el-button>
+          <el-tooltip v-if="row.roleId !== 1" content="分配用户" placement="top">
+            <el-button link v-hasPermi="['system:role:edit']" type="primary" icon="User" @click="handleAuthUser(row)"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -62,7 +62,7 @@
 
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog v-model="open" :title="title" width="500px" append-to-body draggable>
-      <el-form ref="roleRef" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="form.roleName" placeholder="请输入角色名称" />
         </el-form-item>
@@ -160,7 +160,7 @@ import { FormInstance } from 'element-plus'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const roleRef = ref<FormInstance>()
+const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
 const roleList = ref<any[]>([])
@@ -192,24 +192,13 @@ const dataScopeOptions = ref([
   { value: '5', label: '仅本人数据权限' }
 ])
 
-const data = reactive<{
-  form: any
-  queryParams: any
-  rules: any
-}>({
-  form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10
-  },
-  rules: {
-    roleName: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
-    roleKey: [{ required: true, message: '权限字符不能为空', trigger: 'blur' }],
-    roleSort: [{ required: true, message: '角色顺序不能为空', trigger: 'blur' }]
-  }
+const form = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const rules = ref<any>({
+  roleName: [{ required: true, message: '角色名称不能为空', trigger: 'change' }],
+  roleKey: [{ required: true, message: '权限字符不能为空', trigger: 'change' }],
+  roleSort: [{ required: true, message: '角色顺序不能为空', trigger: 'change' }]
 })
-
-const { queryParams, form, rules } = toRefs(data)
 
 /** 查询角色列表 */
 async function getList() {
@@ -290,14 +279,14 @@ function reset() {
     menuCheckStrictly: true,
     deptCheckStrictly: true
   }
-  proxy.resetForm('roleRef')
+  proxy.resetForm('formRef')
 }
 /** 添加角色 */
 function handleAdd() {
   reset()
   getMenuTreeselect()
   open.value = true
-  title.value = '添加角色'
+  title.value = '新增'
 }
 /** 修改角色 */
 async function handleUpdate(row: any) {
@@ -316,7 +305,7 @@ async function handleUpdate(row: any) {
       })
     })
   })
-  title.value = '修改角色'
+  title.value = '修改'
 }
 /** 根据角色ID查询菜单树结构 */
 async function getRoleMenuTreeselect(roleId: any) {
@@ -371,7 +360,7 @@ function getMenuAllCheckedKeys() {
 }
 /** 提交按钮 */
 async function submitForm() {
-  await roleRef.value.validate()
+  await formRef.value.validate()
   form.value.menuIds = getMenuAllCheckedKeys()
   if (form.value.roleId !== undefined) {
     await updateRole(form.value)

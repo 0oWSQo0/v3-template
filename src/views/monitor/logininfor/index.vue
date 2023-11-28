@@ -35,20 +35,20 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border ref="logininforRef" v-loading="loading" :data="logininforList" :default-sort="defaultSort" @selectionChange="handleSelectionChange" @sortChange="handleSortChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="用户名称" align="center" prop="userName" show-overflow-tooltip sortable="custom" :sort-orders="['descending', 'ascending']" />
-      <el-table-column label="地址" align="center" prop="ipaddr" show-overflow-tooltip />
-      <el-table-column label="登录地点" align="center" prop="loginLocation" show-overflow-tooltip />
-      <el-table-column label="操作系统" align="center" prop="os" show-overflow-tooltip />
-      <el-table-column label="浏览器" align="center" prop="browser" show-overflow-tooltip />
-      <el-table-column label="登录状态" align="center" prop="status" width="80">
-        <template #default="scope">
-          <dict-tag :options="sys_common_status" :value="scope.row.status" />
+    <el-table border ref="tableRef" v-loading="loading" :data="logininforList" :default-sort="defaultSort" @selectionChange="handleSelectionChange" @sortChange="handleSortChange">
+      <el-table-column align="center" type="selection" width="55" />
+      <el-table-column align="center" show-overflow-tooltip label="用户名称" prop="userName" sortable="custom" :sort-orders="['descending', 'ascending']" />
+      <el-table-column align="center" show-overflow-tooltip label="地址" prop="ipaddr" />
+      <el-table-column align="center" show-overflow-tooltip label="登录地点" prop="loginLocation" />
+      <el-table-column align="center" show-overflow-tooltip label="操作系统" prop="os" />
+      <el-table-column align="center" show-overflow-tooltip label="浏览器" prop="browser" />
+      <el-table-column align="center" show-overflow-tooltip label="登录状态" prop="status" width="80">
+        <template #default="{ row }">
+          <dict-tag :options="sys_common_status" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="描述" align="center" prop="msg" show-overflow-tooltip />
-      <el-table-column label="访问时间" align="center" prop="loginTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="170" />
+      <el-table-column align="center" show-overflow-tooltip label="描述" prop="msg" />
+      <el-table-column align="center" show-overflow-tooltip label="访问时间" prop="loginTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="170" />
     </el-table>
 
     <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
@@ -62,6 +62,7 @@ import { Sort } from 'element-plus/es/components/table/src/table/defaults'
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { sys_common_status } = proxy.useDict('sys_common_status')
 
+const tableRef = ref() as any
 const logininforList = ref<any[]>([])
 const loading = ref(true)
 const showSearch = ref(true)
@@ -94,7 +95,7 @@ function resetQuery() {
   dateRange.value = []
   proxy.resetForm('queryRef')
   queryParams.value.pageNum = 1
-  ;(proxy.$refs['logininforRef'] as any).sort(defaultSort.value.prop, defaultSort.value.order)
+  tableRef.sort(defaultSort.value.prop, defaultSort.value.order)
 }
 /** 多选框选中数据 */
 function handleSelectionChange(selection: any[]) {
