@@ -222,7 +222,7 @@ const rules = ref({
   businessName: [{ required: true, message: '请输入生成业务名', trigger: 'blur' }],
   functionName: [{ required: true, message: '请输入生成功能名', trigger: 'blur' }]
 })
-function subSelectChange(value: any) {
+function subSelectChange() {
   props.info.subTableFkName = ''
 }
 function tplSelectChange(value: any) {

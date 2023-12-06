@@ -27,3 +27,4 @@ dist-ssr
 yarn*
 components.d.ts
 auto-imports.d.ts
+.eslint-auto-import.json

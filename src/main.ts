@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import './style.css'
-import '@/assets/styles/index.scss'; // global css
+import '@/assets/styles/index.scss' // global css
 import 'animate.css'
 
 import App from './App.vue'

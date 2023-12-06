@@ -21,7 +21,7 @@
         <el-table-column align="center" show-overflow-tooltip label="邮箱" prop="email" />
         <el-table-column align="center" show-overflow-tooltip label="手机" prop="phonenumber" />
         <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
-          <template #default="{row}">
+          <template #default="{ row }">
             <dict-tag :options="sys_normal_disable" :value="row.status" />
           </template>
         </el-table-column>

@@ -35,13 +35,13 @@
       <el-table-column align="center" show-overflow-tooltip label="权限字符" prop="roleKey" width="150" />
       <el-table-column align="center" show-overflow-tooltip label="显示顺序" prop="roleSort" width="100" />
       <el-table-column align="center" show-overflow-tooltip label="状态" width="100">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)"></el-switch>
         </template>
       </el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
       <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-tooltip v-if="row.roleId !== 1" content="修改" placement="top">
             <el-button link v-hasPermi="['system:role:edit']" type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
           </el-tooltip>

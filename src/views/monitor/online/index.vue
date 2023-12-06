@@ -26,7 +26,7 @@
       <el-table-column label="操作系统" align="center" prop="os" show-overflow-tooltip />
       <el-table-column label="浏览器" align="center" prop="browser" show-overflow-tooltip />
       <el-table-column label="登录时间" align="center" prop="loginTime" width="180" />
-      <el-table-column label="操作" align="center"  :min-width="140">
+      <el-table-column label="操作" align="center" :min-width="140">
         <template #default="{ row }">
           <el-button link v-hasPermi="['monitor:online:forceLogout']" type="primary" icon="Delete" @click="handleForceLogout(row)">强退</el-button>
         </template>

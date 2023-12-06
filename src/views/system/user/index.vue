@@ -57,13 +57,13 @@
           <el-table-column align="center" show-overflow-tooltip v-if="columns[2].visible" key="deptName" label="部门" prop="dept.deptName" />
           <el-table-column align="center" show-overflow-tooltip v-if="columns[3].visible" key="phonenumber" label="手机号码" prop="phonenumber" width="120" />
           <el-table-column align="center" show-overflow-tooltip v-if="columns[4].visible" key="status" label="状态">
-            <template #default="{row}">
+            <template #default="{ row }">
               <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)"></el-switch>
             </template>
           </el-table-column>
           <el-table-column align="center" show-overflow-tooltip v-if="columns[5].visible" label="创建时间" prop="createTime" width="170" />
           <el-table-column align="center" show-overflow-tooltip label="操作" width="300">
-            <template #default="{row}">
+            <template #default="{ row }">
               <template v-if="row.userId !== 1">
                 <el-button link v-hasPermi="['system:user:edit']" type="primary" icon="Edit" @click="handleUpdate(row)">修改</el-button>
                 <el-button link v-hasPermi="['system:user:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>

@@ -25,7 +25,7 @@ module.exports = {
   "vueIndentScriptAndStyle": false, // Vue文件script和style标签是否缩进
   // 换行符使用 lf 结尾是 可选值"<auto|lf|crlf|cr>"
   "endOfLine": "lf",
-  'padded-blocks': 0, //块语句内行首行尾是否要空行
-  'space-before-blocks': [0, 'always'],
-  'no-whitespace-before-property': 2, //链式允许多空格
+  // 'padded-blocks': 0, //块语句内行首行尾是否要空行
+  // 'space-before-blocks': [0, 'always'],
+  // 'no-whitespace-before-property': 2, //链式允许多空格
 }

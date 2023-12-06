@@ -21,6 +21,9 @@ export default function createAutoImport() {
       }
     ],
     resolvers: [ElementPlusResolver(), IconsResolver()],
-    dts: 'src/auto-imports.d.ts'
+    dts: 'src/auto-imports.d.ts',
+    eslintrc: {
+      enabled: true
+    }
   })
 }

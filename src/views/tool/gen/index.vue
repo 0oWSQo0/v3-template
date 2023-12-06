@@ -39,7 +39,7 @@
       <el-table-column label="实体" align="center" prop="className" show-overflow-tooltip />
       <el-table-column label="创建时间" align="center" prop="createTime" width="170" />
       <el-table-column label="更新时间" align="center" prop="updateTime" width="170" />
-      <el-table-column label="操作" align="center"  :min-width="140">
+      <el-table-column label="操作" align="center" :min-width="140">
         <template #default="scope">
           <el-tooltip content="预览" placement="top">
             <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasPermi="['tool:gen:preview']"></el-button>

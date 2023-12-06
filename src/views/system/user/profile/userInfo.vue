@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <el-form ref="userRef" :model="user" :rules="rules" label-width="80px">
     <el-form-item label="用户昵称" prop="nickName">
@@ -32,7 +33,7 @@ const props = defineProps({
   }
 })
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
+const { proxy } = getCurrentInstance()
 
 const rules = ref<any>({
   nickName: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],

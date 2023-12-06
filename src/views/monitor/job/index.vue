@@ -241,7 +241,7 @@ async function getList() {
   loading.value = false
 }
 /** 任务组名字典翻译 */
-function jobGroupFormat(row: any, _column?: any) {
+function jobGroupFormat(row: any) {
   return proxy.selectDictLabel(sys_job_group.value, row.jobGroup)
 }
 /** 取消按钮 */

@@ -62,7 +62,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="90">
         <template #default="scope">
-          <el-button v-hasPermi="['monitor:operlog:query']" link type="primary" icon="View" @click="handleView(scope.row, scope.index)">详细</el-button>
+          <el-button v-hasPermi="['monitor:operlog:query']" link type="primary" icon="View" @click="handleView(scope.row)">详细</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -172,7 +172,7 @@ function handleSortChange(column: any) {
   getList()
 }
 /** 详细按钮操作 */
-function handleView(row: any, _index: number) {
+function handleView(row: any) {
   open.value = true
   form.value = row
 }

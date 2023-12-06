@@ -35,14 +35,14 @@
       <el-table-column align="center" show-overflow-tooltip label="参数键名" prop="configKey" />
       <el-table-column align="center" show-overflow-tooltip label="参数键值" prop="configValue" />
       <el-table-column align="center" show-overflow-tooltip label="系统内置" prop="configType" width="80">
-        <template #default="{row}">
+        <template #default="{ row }">
           <dict-tag :options="sys_yes_no" :value="row.configType" />
         </template>
       </el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="备注" prop="remark" />
       <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
       <el-table-column align="center" show-overflow-tooltip label="操作" width="140">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-button link v-hasPermi="['system:config:edit']" type="primary" icon="Edit" @click="handleUpdate(row)">修改</el-button>
           <el-button link v-hasPermi="['system:config:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>

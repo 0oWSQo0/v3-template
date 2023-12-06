@@ -35,19 +35,19 @@
       <el-table-column align="center" type="selection" width="55" />
       <el-table-column align="center" show-overflow-tooltip label="任务名称" prop="jobName" />
       <el-table-column align="center" show-overflow-tooltip label="任务组名" prop="jobGroup">
-        <template #default="{row}">
+        <template #default="{ row }">
           <dict-tag :options="sys_job_group" :value="row.jobGroup" />
         </template>
       </el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="调用目标字符串" prop="invokeTarget" />
       <el-table-column align="center" show-overflow-tooltip label="日志信息" prop="jobMessage" />
       <el-table-column align="center" show-overflow-tooltip label="执行状态" prop="status">
-        <template #default="{row}">
+        <template #default="{ row }">
           <dict-tag :options="sys_common_status" :value="row.status" />
         </template>
       </el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="执行时间" prop="createTime" width="180" />
-      <el-table-column align="center" show-overflow-tooltip label="操作"  :min-width="140">
+      <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
         <template #default="{ row }">
           <el-button link v-hasPermi="['monitor:job:query']" type="primary" icon="View" @click="handleView(row)">详细</el-button>
         </template>
@@ -97,7 +97,6 @@
 <script setup name="JobLog" lang="ts">
 import { getJob } from '@/api/monitor/job'
 import { listJobLog, delJobLog, cleanJobLog } from '@/api/monitor/jobLog'
-import { parseTime } from '@/utils/common'
 import { oneOf } from '@zeronejs/utils'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
@@ -115,7 +114,6 @@ const route = useRoute()
 
 const form = ref<any>({})
 const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
-
 
 /** 查询调度日志列表 */
 async function getList() {
@@ -163,7 +161,6 @@ async function handleClean() {
   await cleanJobLog()
   getList()
   proxy.$modal.msgSuccess('清空成功')
- 
 }
 /** 导出按钮操作 */
 function handleExport() {

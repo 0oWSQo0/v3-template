@@ -64,7 +64,7 @@ async function handleLogin() {
   try {
     await userStore.login(loginForm.value)
     router.push({ path: redirect.value || '/' })
-  } catch(e: any) {
+  } catch (e: any) {
     loading.value = false
     // 重新获取验证码
     if (captchaEnabled.value) {
@@ -122,5 +122,4 @@ getCode()
   font-size: 12px;
   letter-spacing: 1px;
 }
-
 </style>

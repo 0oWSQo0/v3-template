@@ -17,7 +17,15 @@
     </el-form>
 
     <h4 class="form-header h4">角色信息</h4>
-    <el-table border ref="roleRef" v-loading="loading" :row-key="getRowKey" :data="roles.slice((pageNum - 1) * pageSize, pageNum * pageSize)" @rowClick="clickRow" @selectionChange="handleSelectionChange">
+    <el-table
+      border
+      ref="roleRef"
+      v-loading="loading"
+      :row-key="getRowKey"
+      :data="roles.slice((pageNum - 1) * pageSize, pageNum * pageSize)"
+      @rowClick="clickRow"
+      @selectionChange="handleSelectionChange"
+    >
       <el-table-column align="center" label="序号" width="55" type="index">
         <template #default="scope">
           <span>{{ (pageNum - 1) * pageSize + scope.$index + 1 }}</span>
@@ -43,7 +51,6 @@
 
 <script setup name="AuthRole" lang="ts">
 import { getAuthRole, updateAuthRole } from '@/api/system/user'
-import { parseTime } from '@/utils/common'
 
 const route = useRoute()
 const { proxy } = getCurrentInstance() as ComponentInternalInstance

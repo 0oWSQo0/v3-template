@@ -1,7 +1,7 @@
 <template>
   <transition-group name="fade-transform" mode="out-in">
-    <template v-for="(item, index) in (tagsViewStore.iframeViews as any)" :key="item.path">
-      <inner-link v-show="route.path === item.path"  :iframeId="'iframe' + index" :src="item.meta.link"></inner-link>
+    <template v-for="(item, index) in tagsViewStore.iframeViews as any" :key="item.path">
+      <inner-link v-show="route.path === item.path" :iframeId="'iframe' + index" :src="item.meta.link"></inner-link>
     </template>
   </transition-group>
 </template>

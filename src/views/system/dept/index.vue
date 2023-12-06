@@ -25,13 +25,13 @@
       <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip prop="orderNum" label="排序" width="200"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip prop="status" label="状态" width="100">
-        <template #default="{row}">
+        <template #default="{ row }">
           <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
       <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-button link type="primary" icon="Plus" v-hasPermi="['system:dept:add']" @click="handleAdd(row)">新增</el-button>
           <el-button link type="success" icon="Edit" v-hasPermi="['system:dept:edit']" @click="handleUpdate(row)">修改</el-button>
           <el-button link type="danger" icon="Delete" v-if="row.parentId != 0" v-hasPermi="['system:dept:remove']" @click="handleDelete(row)">删除</el-button>
@@ -192,7 +192,7 @@ async function submitForm() {
     await updateDept(form.value)
     proxy.$modal.msgSuccess('修改成功')
   } else {
-    await addDept(form.value);
+    await addDept(form.value)
     proxy.$modal.msgSuccess('新增成功')
   }
   open.value = false

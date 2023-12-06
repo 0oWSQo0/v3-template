@@ -28,7 +28,7 @@
     <el-table border v-if="refreshTable" v-loading="loading" :data="menuList" row-key="menuId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column prop="menuName" show-overflow-tooltip label="菜单名称" width="160"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="图标" prop="icon" width="100">
-        <template #default="{row}">
+        <template #default="{ row }">
           <svg-icon :icon-class="row.icon" />
         </template>
       </el-table-column>
@@ -36,13 +36,13 @@
       <el-table-column align="center" show-overflow-tooltip prop="perms" label="权限标识"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip prop="component" label="组件路径"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip prop="status" label="状态" width="80">
-        <template #default="{row}">
+        <template #default="{ row }">
           <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="创建时间" width="170" prop="createTime" />
       <el-table-column align="center" show-overflow-tooltip label="操作" width="230">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-button link v-hasPermi="['system:menu:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
           <el-button link v-hasPermi="['system:menu:add']" type="primary" icon="Plus" @click="handleAdd(row)">新增</el-button>
           <el-button link v-hasPermi="['system:menu:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>

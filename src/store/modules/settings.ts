@@ -23,8 +23,8 @@ const useSettingsStore = defineStore('settings', {
     changeSetting(data: any) {
       const { key, value } = data
       // if (this.hasOwnProperty(key)) {
-        // Reflect.set(this, key, value)
-        this[key] = value
+      // Reflect.set(this, key, value)
+      this[key] = value
       // }
     },
     // 设置网页标题

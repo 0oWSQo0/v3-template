@@ -38,7 +38,7 @@ const usePermissionStore = defineStore('permission', {
     setSidebarRouters(routes: RouteRecordRaw[]) {
       this.sidebarRouters = routes
     },
-    generateRoutes(routes?: RouteRecordRaw[]) {
+    generateRoutes() {
       return new Promise<any[]>(resolve => {
         // 向后端请求路由数据
         getRouters().then(res => {
@@ -64,6 +64,7 @@ const usePermissionStore = defineStore('permission', {
 })
 
 // 遍历后台传来的路由字符串，转换为组件对象
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function filterAsyncRouter(asyncRouterMap: any[], lastRouter = false, type = false) {
   return asyncRouterMap.filter(route => {
     if (type && route.children) {
@@ -93,7 +94,7 @@ function filterAsyncRouter(asyncRouterMap: any[], lastRouter = false, type = fal
 
 function filterChildren(childrenMap: any[], lastRouter: any = false) {
   let children: any[] = []
-  childrenMap.forEach((el, index) => {
+  childrenMap.forEach(el => {
     if (el.children && el.children.length) {
       if (el.component === 'ParentView' && !lastRouter) {
         el.children.forEach((c: any) => {

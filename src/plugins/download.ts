@@ -13,7 +13,7 @@ export default {
       method: 'get',
       url: url,
       responseType: 'blob',
-      headers: { Authorization: 'Bearer ' + getToken() },
+      headers: { Authorization: 'Bearer ' + getToken() }
     }).then(res => {
       const isBlob = blobValidate(res.data)
       if (isBlob) {
@@ -30,7 +30,7 @@ export default {
       method: 'get',
       url: url,
       responseType: 'blob',
-      headers: { Authorization: 'Bearer ' + getToken() },
+      headers: { Authorization: 'Bearer ' + getToken() }
     }).then(res => {
       const isBlob = blobValidate(res.data)
       if (isBlob) {
@@ -47,7 +47,7 @@ export default {
       method: 'get',
       url: url,
       responseType: 'blob',
-      headers: { Authorization: 'Bearer ' + getToken() },
+      headers: { Authorization: 'Bearer ' + getToken() }
     }).then(res => {
       const isBlob = blobValidate(res.data)
       if (isBlob) {
@@ -66,5 +66,5 @@ export default {
     const rspObj = JSON.parse(resText)
     const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
     ElMessage.error(errMsg)
-  },
+  }
 }

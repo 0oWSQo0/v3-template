@@ -31,13 +31,13 @@
       <el-table-column align="center" show-overflow-tooltip label="岗位名称" prop="postName" />
       <el-table-column align="center" show-overflow-tooltip label="岗位排序" prop="postSort" />
       <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
-        <template #default="{row}">
+        <template #default="{ row }">
           <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
       <el-table-column align="center" show-overflow-tooltip label="操作" width="160">
-        <template #default="{row}">
+        <template #default="{ row }">
           <el-button link v-hasPermi="['system:post:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
           <el-button link v-hasPermi="['system:post:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
         </template>
