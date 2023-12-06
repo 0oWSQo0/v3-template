@@ -12,6 +12,12 @@
     "postinstall": "husky install",
     "prettier:check": "prettier --check \"src/**/*.{js,ts,css,html,vue}\" --write"
   },
+  "lint-staged": {
+    "**/*.{js,jsx,tsx,scss,vue,json}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "@vueup/vue-quill": "^1.2.0",
