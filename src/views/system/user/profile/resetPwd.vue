@@ -36,14 +36,14 @@ const equalToPassword = (_rule: any, value: any, callback: any) => {
   }
 }
 const rules = ref<any>({
-  oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
+  oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'change' }],
   newPassword: [
-    { required: true, message: '新密码不能为空', trigger: 'blur' },
-    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+    { required: true, message: '新密码不能为空', trigger: 'change' },
+    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'change' }
   ],
   confirmPassword: [
-    { required: true, message: '确认密码不能为空', trigger: 'blur' },
-    { required: true, validator: equalToPassword, trigger: 'blur' }
+    { required: true, message: '确认密码不能为空', trigger: 'change' },
+    { required: true, validator: equalToPassword, trigger: 'change' }
   ]
 })
 
