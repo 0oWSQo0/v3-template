@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
     <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!settingsStore.topNav" />
+    <breadcrumb id="breadcrumb-container" class="float-left" v-if="!settingsStore.topNav" />
     <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav" />
 
     <div class="right-menu">
@@ -106,10 +106,6 @@ function setLayout() {
     &:hover {
       background: rgba(0, 0, 0, 0.025);
     }
-  }
-
-  .breadcrumb-container {
-    float: left;
   }
 
   .topmenu-container {

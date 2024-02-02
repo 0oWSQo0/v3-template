@@ -1,19 +1,20 @@
 .el-table {
-	.el-table__header-wrapper, .el-table__fixed-header-wrapper {
-		th {
-			word-break: break-word;
-			background-color: #f8f8f9 !important;
-			color: #515a6e;
-			height: 40px !important;
-			font-size: 13px;
-		}
-	}
+  .el-table__header-wrapper,
+  .el-table__fixed-header-wrapper {
+    th {
+      word-break: break-word;
+      background-color: #f8f8f9 !important;
+      color: #515a6e;
+      height: 40px !important;
+      font-size: 13px;
+    }
+  }
   .el-table__body-wrapper {
     .el-button [class*='el-icon'] + span {
       margin-left: 1px;
     }
     // 表格操作按钮间距
-    .cell .el-button+.el-button {
+    .cell .el-button + .el-button {
       margin-left: 0;
     }
     .el-table__body {
@@ -24,19 +25,17 @@
       }
     }
   }
-  
 }
-
 
 /* 表格右侧工具栏样式 */
 .top-right-btn {
-	margin-left: auto;
+  margin-left: auto;
 }
 
 // 弹框
 .el-dialog {
   .el-dialog__body {
-    padding: 0px 20px;
+    padding: 10px 20px;
   }
 }
 

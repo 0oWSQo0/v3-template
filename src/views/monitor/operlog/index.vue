@@ -18,15 +18,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="操作时间" style="width: 300px">
-        <el-date-picker
-          v-model="dateRange"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
-        ></el-date-picker>
+        <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD HH:mm:ss" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -108,9 +100,7 @@
         </el-row>
       </el-form>
       <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="open = false">关 闭</el-button>
-        </div>
+        <el-button @click="open = false">关 闭</el-button>
       </template>
     </el-dialog>
   </div>
@@ -123,6 +113,7 @@ import { Sort } from 'element-plus/es/components/table/src/table/defaults'
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { sys_oper_type, sys_common_status } = proxy.useDict('sys_oper_type', 'sys_common_status')
 
+const operlogRef = ref()
 const operlogList = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
@@ -158,7 +149,7 @@ function resetQuery() {
   dateRange.value = []
   proxy.resetForm('queryRef')
   queryParams.value.pageNum = 1
-  ;(proxy.$refs['operlogRef'] as any).sort(defaultSort.value.prop, defaultSort.value.order)
+  operlogRef.value.sort(defaultSort.value.prop, defaultSort.value.order)
 }
 /** 多选框选中数据 */
 function handleSelectionChange(selection: any[]) {

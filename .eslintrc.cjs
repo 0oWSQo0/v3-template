@@ -15,6 +15,9 @@ module.exports = {
   rules: {
     "@typescript-eslint/no-explicit-any": ["off"],
     "vue/multi-word-component-names": 'off',
-    'no-useless-escape': 'off'
+    'no-useless-escape': 'off',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off'
   }
 }

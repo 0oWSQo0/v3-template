@@ -98,7 +98,7 @@ function modalOpened() {
   visible.value = true
 }
 /** 覆盖默认上传行为 */
-function requestUpload() {
+function requestUpload(): any {
   console.log('覆盖默认上传行为')
 }
 /** 向左旋转 */

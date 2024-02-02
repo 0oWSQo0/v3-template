@@ -11,8 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
-
+import { ref, watch, onMounted } from 'vue'
 const props = defineProps({
   ex: {
     type: String,
@@ -20,9 +19,9 @@ const props = defineProps({
   }
 })
 const dayRule = ref('')
-const dayRuleSup = ref<any>('')
+const dayRuleSup = ref()
 const dateArr = ref<any[]>([])
-const resultList = ref<string[]>([])
+const resultList = ref<any[]>([])
 const isShow = ref(false)
 watch(
   () => props.ex,
@@ -62,12 +61,12 @@ function expressionChange() {
   let MDate = dateArr.value[4]
   let YDate = dateArr.value[5]
   // 获取当前时间在数组中的索引
-  let sIdx = getIndex(sDate, nSecond) as number
-  let mIdx = getIndex(mDate, nMin) as number
-  let hIdx = getIndex(hDate, nHour) as number
-  let DIdx = getIndex(DDate, nDay) as number
-  let MIdx = getIndex(MDate, nMonth) as number
-  let YIdx = getIndex(YDate, nYear) as number
+  let sIdx = getIndex(sDate, nSecond)
+  let mIdx = getIndex(mDate, nMin)
+  let hIdx = getIndex(hDate, nHour)
+  let DIdx = getIndex(DDate, nDay)
+  let MIdx = getIndex(MDate, nMonth)
+  let YIdx = getIndex(YDate, nYear)
   // 重置月日时分秒的函数(后面用的比较多)
   const resetSecond = function () {
     sIdx = 0
@@ -285,7 +284,7 @@ function expressionChange() {
               continue
             }
             // 循环"秒"数组
-            for (let si = sIdx; si <= sDate.length - 1; si++) {
+            goSecond: for (let si = sIdx; si <= sDate.length - 1; si++) {
               let ss = sDate[si] < 10 ? '0' + sDate[si] : sDate[si]
               // 添加当前时间（时间合法性在日期循环时已经判断）
               if (MM !== '00' && DD !== '00') {
@@ -334,7 +333,7 @@ function expressionChange() {
   isShow.value = true
 }
 // 用于计算某位数字在数组中的索引
-function getIndex(arr: any[], value: any) {
+function getIndex(arr: any, value: any): any {
   if (value <= arr[0] || value > arr[arr.length - 1]) {
     return 0
   } else {
@@ -507,7 +506,7 @@ function getCycleArr(rule: any, limit: any, status: any) {
   return arr
 }
 // 比较数字大小（用于Array.sort）
-function compare(value1: number, value2: number) {
+function compare(value1: any, value2: any) {
   if (value2 - value1 > 0) {
     return -1
   } else {
@@ -517,7 +516,6 @@ function compare(value1: number, value2: number) {
 // 格式化日期格式如：2017-9-19 18:04:33
 function formatDate(value: any, type?: any) {
   // 计算日期相关值
-  // eslint-disable-next-line eqeqeq
   let time = typeof value == 'number' ? new Date(value) : value
   let Y = time.getFullYear()
   let M = time.getMonth() + 1

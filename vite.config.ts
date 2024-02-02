@@ -18,7 +18,7 @@ export default defineConfig(({ mode, command }) => {
       open: true,
       proxy: {
         "/dev-api": {
-          target: "http://vue.ruoyi.vip/prod-api",
+          target: "https://vue.ruoyi.vip/prod-api",
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, ""),
         },

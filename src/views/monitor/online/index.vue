@@ -12,10 +12,11 @@
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-    <el-table border v-loading="loading" :data="onlineList.slice((pageNum - 1) * pageSize, pageNum * pageSize)" style="width: 100%">
+
+    <el-table border v-loading="loading" :data="onlineList.slice((queryParams.pageNum - 1) * queryParams.pageSize, queryParams.pageNum * queryParams.pageSize)">
       <el-table-column label="序号" width="55" type="index" align="center">
         <template #default="scope">
-          <span>{{ (pageNum - 1) * pageSize + scope.$index + 1 }}</span>
+          <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
       <el-table-column label="会话编号" align="center" prop="tokenId" show-overflow-tooltip />
@@ -33,7 +34,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total > 0" v-model:page="pageNum" v-model:limit="pageSize" :total="total" />
+    <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" />
   </div>
 </template>
 
@@ -45,10 +46,8 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const onlineList = ref<any[]>([])
 const loading = ref(true)
 const total = ref(0)
-const pageNum = ref(1)
-const pageSize = ref(10)
 
-const queryParams = ref<any>({})
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 
 /** 查询登录日志列表 */
 async function getList() {
@@ -60,7 +59,7 @@ async function getList() {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  pageNum.value = 1
+  queryParams.value.pageNum = 1
   getList()
 }
 /** 重置按钮操作 */

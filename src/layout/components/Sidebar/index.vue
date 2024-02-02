@@ -42,7 +42,7 @@ const sideTheme = computed(() => settingsStore.sideTheme)
 const theme = computed(() => settingsStore.theme)
 const isCollapse = computed(() => !appStore.sidebar.opened)
 
-const activeMenu = computed(() => {
+const activeMenu: any = computed(() => {
   const { meta, path } = route
   // if set path, the sidebar will highlight the path you set
   if (meta.activeMenu) {

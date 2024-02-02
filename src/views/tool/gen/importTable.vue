@@ -24,10 +24,8 @@
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-row>
     <template #footer>
-      <div class="dialog-footer">
-        <el-button type="primary" @click="handleImportTable">确 定</el-button>
-        <el-button @click="visible = false">取 消</el-button>
-      </div>
+      <el-button type="primary" @click="handleImportTable">确 定</el-button>
+      <el-button @click="visible = false">取 消</el-button>
     </template>
   </el-dialog>
 </template>

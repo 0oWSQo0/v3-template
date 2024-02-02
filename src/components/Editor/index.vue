@@ -1,13 +1,12 @@
 <template>
   <div class="editor">
-    <quill-editor v-model:content="content" contentType="html" @textChange="e => $emit('update:modelValue', content)" :options="options" :style="styles" />
+    <quill-editor v-model:content="content" contentType="html" @textChange="() => $emit('update:modelValue', content)" :options="options" :style="styles" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import { computed, ref, watch } from 'vue'
 const props = defineProps({
   /* 编辑器的内容 */
   modelValue: {

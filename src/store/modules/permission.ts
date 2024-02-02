@@ -64,7 +64,6 @@ const usePermissionStore = defineStore('permission', {
 })
 
 // 遍历后台传来的路由字符串，转换为组件对象
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function filterAsyncRouter(asyncRouterMap: any[], lastRouter = false, type = false) {
   return asyncRouterMap.filter(route => {
     if (type && route.children) {

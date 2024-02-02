@@ -72,6 +72,7 @@ app.component('svg-icon', SvgIcon)
 
 directive(app)
 
+// @ts-ignore
 app.use(ElementPlus, {
   locale: zhCn,
   size: Cookies.get('size') || 'default' // 支持 large、default、small

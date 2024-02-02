@@ -69,7 +69,6 @@
 
 <script setup name="CacheList" lang="ts">
 import { listCacheName, listCacheKey, getCacheValue, clearCacheName, clearCacheKey, clearCacheAll } from '@/api/monitor/cache'
-import { getCurrentInstance, ComponentInternalInstance, ref } from 'vue'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
@@ -137,10 +136,9 @@ function keyFormatter(cacheKey: any) {
 }
 
 /** 查询缓存内容详细 */
-function handleCacheValue(cacheKey: any) {
-  getCacheValue(nowCacheName.value, cacheKey).then(response => {
-    cacheForm.value = response.data
-  })
+async function handleCacheValue(cacheKey: any) {
+  const res: any = getCacheValue(nowCacheName.value, cacheKey)
+  cacheForm.value = res.data
 }
 
 /** 清理全部缓存 */

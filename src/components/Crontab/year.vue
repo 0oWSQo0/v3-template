@@ -34,10 +34,7 @@
   </el-form>
 </template>
 
-<!-- eslint-disable vue/no-side-effects-in-computed-properties -->
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-
 const emit = defineEmits(['update'])
 const props = defineProps({
   cron: {
@@ -54,7 +51,6 @@ const props = defineProps({
   },
   check: {
     type: Function,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     default: () => {}
   }
 })
@@ -67,6 +63,7 @@ const average01 = ref(0)
 const average02 = ref(1)
 const checkboxList = ref<number[]>([])
 const checkCopy = ref<number[]>([])
+
 const cycleTotal = computed(() => {
   cycle01.value = props.check(cycle01.value, fullYear.value, maxFullYear.value - 1)
   cycle02.value = props.check(cycle02.value, cycle01.value + 1, maxFullYear.value)
@@ -85,6 +82,7 @@ watch(
   value => changeRadioValue(value)
 )
 watch([radioValue, cycleTotal, averageTotal, checkboxString], () => onRadioChange())
+
 function changeRadioValue(value: string) {
   if (value === '') {
     radioValue.value = 1
@@ -129,14 +127,13 @@ function onRadioChange() {
       break
   }
 }
-onMounted(() => {
-  fullYear.value = Number(new Date().getFullYear())
-  maxFullYear.value = fullYear.value + 10
-  cycle01.value = fullYear.value
-  cycle02.value = cycle01.value + 1
-  average01.value = fullYear.value
-  checkCopy.value = [fullYear.value]
-})
+
+fullYear.value = Number(new Date().getFullYear())
+maxFullYear.value = fullYear.value + 10
+cycle01.value = fullYear.value
+cycle02.value = cycle01.value + 1
+average01.value = fullYear.value
+checkCopy.value = [fullYear.value]
 </script>
 
 <style lang="scss" scoped>
