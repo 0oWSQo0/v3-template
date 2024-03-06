@@ -2,7 +2,6 @@
   "name": "v3-tmp",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
   "author": "WSQ",
   "scripts": {
     "dev": "vite",
@@ -36,6 +35,8 @@
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.0.3",
+    "@commitlint/config-conventional": "^19.0.3",
     "@iconify/json": "^2.2.147",
     "@types/file-saver": "^2.0.5",
     "@types/js-cookie": "^3.0.3",
@@ -49,6 +50,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-vue": "^9.17.0",
     "husky": "^8.0.0",
+    "lint-staged": "^15.2.2",
     "postcss": "^8.4.27",
     "prettier": "^3.0.1",
     "sass": "^1.64.2",
