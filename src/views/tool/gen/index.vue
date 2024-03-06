@@ -81,7 +81,6 @@
 <script setup name="Gen" lang="ts">
 import { listTable, previewTable, delTable, genCode, synchDb } from '@/api/tool/gen'
 import router from '@/router'
-import { oneOf } from '@zeronejs/utils'
 import importTable from './importTable.vue'
 
 const route = useRoute()
@@ -118,6 +117,10 @@ const data = reactive<{
 })
 
 const { queryParams, preview } = toRefs(data)
+
+const oneOf = param => {
+  return (Array.isArray(param) ? param[0] : param) ?? ''
+}
 
 onActivated(() => {
   const time = oneOf(route.query.t)

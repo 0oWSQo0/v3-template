@@ -95,7 +95,6 @@
 <script setup name="JobLog" lang="ts">
 import { getJob } from '@/api/monitor/job'
 import { listJobLog, delJobLog, cleanJobLog } from '@/api/monitor/jobLog'
-import { oneOf } from '@zeronejs/utils'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { sys_common_status, sys_job_group } = proxy.useDict('sys_common_status', 'sys_job_group')
@@ -163,6 +162,10 @@ async function handleClean() {
 /** 导出按钮操作 */
 function handleExport() {
   proxy.download('monitor/jobLog/export', queryParams.value, `job_log_${new Date().getTime()}.xlsx`)
+}
+
+const oneOf = param => {
+  return (Array.isArray(param) ? param[0] : param) ?? ''
 }
 
 ;(() => {

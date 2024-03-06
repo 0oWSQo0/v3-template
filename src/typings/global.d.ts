@@ -5,14 +5,13 @@ import tab from '@/plugins/tab'
 import download from '@/plugins/download'
 import { useDict } from '@/utils/dict'
 import { download as utilsDownload } from '@/utils/request'
-import { addDateRange, handleTree, parseTime, resetForm, selectDictLabel, selectDictLabels } from '@/utils/ruoyi'
+import { addDateRange, handleTree, resetForm, selectDictLabel, selectDictLabels } from '@/utils/common'
 
 export {}
 declare module 'vue' {
   interface ComponentCustomProperties {
     useDict: typeof useDict
     download: typeof utilsDownload
-    parseTime: typeof parseTime
     resetForm: typeof resetForm
     handleTree: typeof handleTree
     addDateRange: typeof addDateRange

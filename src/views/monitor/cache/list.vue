@@ -57,7 +57,7 @@
             </el-col>
             <el-col :offset="1" :span="22">
               <el-form-item label="缓存内容:" prop="cacheValue">
-                <el-input v-model="cacheForm.cacheValue" type="textarea" :rows="8" :readOnly="true" />
+                <el-input v-model="cacheForm.cacheValue" type="textarea" show-word-limit maxlength="200" :rows="8" :readOnly="true" />
               </el-form-item>
             </el-col>
           </el-row>

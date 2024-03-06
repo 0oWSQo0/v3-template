@@ -164,7 +164,7 @@
             <el-form-item label="cron表达式：">{{ form.cronExpression }}</el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="下次执行时间：">{{ parseTime(form.nextValidTime) }}</el-form-item>
+            <el-form-item label="下次执行时间：">{{ form.nextValidTime }}</el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="调用目标方法：">{{ form.invokeTarget }}</el-form-item>
@@ -200,7 +200,6 @@
 
 <script setup name="Job" lang="ts">
 import { listJob, getJob, delJob, addJob, updateJob, runJob, changeJobStatus } from '@/api/monitor/job'
-import { parseTime } from '@/utils/common'
 import Crontab from '@/components/Crontab/index.vue'
 const router = useRouter()
 const { proxy } = getCurrentInstance() as ComponentInternalInstance

@@ -19,7 +19,6 @@ const service = async (params: any) => {
 let hdevice = '',
   happlication = '',
   hcontainer = ''
-console.log(`output->happlication`, happlication, hcontainer)
 const BHA = {
   openDevByIndex: async (num: number) => {
     const { devList } = await service({ order: '01000001' })

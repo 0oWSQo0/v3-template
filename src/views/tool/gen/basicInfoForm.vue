@@ -24,7 +24,7 @@
       </el-col>
       <el-col :span="24">
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="info.remark" type="textarea" :rows="3"></el-input>
+          <el-input v-model="info.remark" type="textarea" show-word-limit maxlength="200" :rows="3"></el-input>
         </el-form-item>
       </el-col>
     </el-row>

@@ -64,7 +64,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.remark" type="textarea" show-word-limit maxlength="200" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -131,10 +131,7 @@ function cancel() {
 }
 /** 表单重置 */
 function reset() {
-  form.value = {
-    postSort: 0,
-    status: '0'
-  }
+  form.value = { postSort: 0, status: '0' }
   proxy.resetForm('formRef')
 }
 /** 新增按钮操作 */

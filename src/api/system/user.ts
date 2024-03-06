@@ -6,7 +6,7 @@ export function listUser(params: any) {
 }
 // 查询详细
 export function getUser(userId?: any) {
-  return request({ url: '/system/user/' + userId || '' })
+  return request({ url: '/system/user/' + (userId || '') })
 }
 // 新增
 export function addUser(data: any) {

@@ -1,6 +1,7 @@
 <template>
   <div :class="{ hidden: hidden }" class="p-2 my-1 flex justify-end">
     <el-pagination
+      small
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
       :background="background"
@@ -62,14 +63,10 @@ function handleSizeChange(val: number) {
     currentPage.value = 1
   }
   emit('pagination', { page: currentPage.value, limit: val })
-  if (props.autoScroll) {
-    scrollTo(0, 800)
-  }
+  props.autoScroll && scrollTo(0, 800)
 }
 function handleCurrentChange(val: number) {
   emit('pagination', { page: val, limit: pageSize.value })
-  if (props.autoScroll) {
-    scrollTo(0, 800)
-  }
+  props.autoScroll && scrollTo(0, 800)
 }
 </script>
