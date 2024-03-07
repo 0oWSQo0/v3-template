@@ -24,5 +24,7 @@ module.exports = {
     footer: '关联关闭的issue，例如：#31, #34(可选): \n',
     confirmCommit: '确定提交说明? \n'
   },
+  // 跳过空的 scope
+  skipEmptyScopes: true,
   skipQuestions: ['scopes', 'breaking', 'body', 'footer']
 }
