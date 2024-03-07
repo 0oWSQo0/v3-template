@@ -155,5 +155,5 @@ export const Regular = {
   //email(支持中文邮箱)
   Chinese_mailbox:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
   //域名(非网址, 不包含协议)
-  Domain_name:/^([0-9a-zA-Z-]{1,}\.)+([a-zA-Z]{2,})$/
+  Domain_name:/^([0-9a-zA-Z-]{1,}\.)+([a-zA-Z]{2,})$/,
 }
