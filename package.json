@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .vue,.js,cjs,mjs,.ts,.cts,.mts,.jsx,.tsx --fix",
     "postinstall": "husky install",
     "prettier:check": "prettier --check \"src/**/*.{js,ts,css,html,vue}\" --write",
-    "commit": "git-cz"
+    "commit": "git add . && git-cz"
   },
   "lint-staged": {
     "**/*.{js,jsx,tsx,scss,vue,json}": [
@@ -20,7 +20,7 @@
   },
   "config": {
     "commitizen": {
-      "path": "@commitlint/cz-commitlint"
+      "path": "node_modules/cz-customizable"
     }
   },
   "dependencies": {
@@ -43,7 +43,6 @@
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
     "@commitlint/config-conventional": "^19.0.3",
-    "@commitlint/cz-commitlint": "^19.0.3",
     "@iconify/json": "^2.2.147",
     "@types/file-saver": "^2.0.5",
     "@types/js-cookie": "^3.0.3",
@@ -54,6 +53,8 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "autoprefixer": "^10.4.14",
     "commitizen": "^4.3.0",
+    "commitlint-config-cz": "^0.13.3",
+    "cz-customizable": "^7.0.0",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-vue": "^9.17.0",
