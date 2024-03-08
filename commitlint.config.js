@@ -37,7 +37,7 @@ module.exports = {
     types: [
       { value: 'feat', name: '特性:   🚀  新增功能', emoji: '🚀' },
       { value: 'fix', name: '修复:   🧩  修复缺陷', emoji: '🧩' },
-      { value: 'docs', name: '文档:   📚  文档变更', emoji: '📚' },
+      { value: 'docs', name: '文档:   📝  文档变更', emoji: '📝' },
       { value: 'style', name: '格式:   🎨  代码格式（不影响功能，例如空格、分号等格式修正）', emoji: '🎨' },
       { value: 'refactor', name: '重构:   ♻️  代码重构（不包括 bug 修复、功能新增）', emoji: '♻️' },
       { value: 'perf', name: '性能:   ⚡️  性能优化', emoji: '⚡️' },

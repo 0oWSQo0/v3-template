@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
+    "commit": "git add . && git-cz",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,cjs,mjs,.ts,.cts,.mts,.jsx,.tsx --fix",
     "postinstall": "husky install",
-    "prettier:check": "prettier --check \"src/**/*.{js,ts,css,html,vue}\" --write",
-    "commit": "git add . && git-cz"
+    "prettier:check": "prettier --check \"src/**/*.{js,ts,css,html,vue}\" --write"
   },
   "husky": {
     "hooks": {
