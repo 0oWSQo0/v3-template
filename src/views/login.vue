@@ -1,35 +1,34 @@
 <template>
   <div class="login">
-    <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
-      <h2 class="text-center mb-4">后台管理系统</h2>
+    <h2 class="text-center mb-4 text-5xl tracking-wider">后台管理系统</h2>
+    <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="p-6 shadow-lg rounded-lg w-96 shadow-gray-800">
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="请输入账号">
-          <template #prefix><svg-icon icon-class="user" /></template>
+          <template #prefix><i-material-symbols-light-account-circle-outline style="font-size: 20px" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
         <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" placeholder="请输入密码" @keyup.enter="handleLogin">
-          <template #prefix><svg-icon icon-class="password" /></template>
+          <template #prefix><i-material-symbols-light-lock-outline style="font-size: 20px" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="code" v-if="captchaEnabled">
-        <el-input v-model="loginForm.code" size="large" auto-complete="off" placeholder="验证码" style="width: 67%" @keyup.enter="handleLogin">
-          <template #prefix><svg-icon icon-class="validCode" /></template>
+        <el-input v-model="loginForm.code" size="large" auto-complete="off" placeholder="请输入验证码" style="width: 67%" @keyup.enter="handleLogin">
+          <template #prefix><i-material-symbols-light-verified-user-outline style="font-size: 20px" /></template>
         </el-input>
-        <div class="login-code">
-          <img :src="codeUrl" @click="getCode" class="pl-2" />
+        <div class="h-10 float-right w-[33%]">
+          <img :src="codeUrl" @click="getCode" class="pl-2 cursor-pointer h-10" />
         </div>
       </el-form-item>
-      <el-form-item>
-        <el-button :loading="loading" size="large" type="primary" style="width: 100%" @click.prevent="handleLogin">
-          <span v-if="!loading">登 录</span>
-          <span v-else>登 录 中...</span>
-        </el-button>
-      </el-form-item>
+
+      <el-button :loading="loading" size="large" type="primary" style="width: 100%" @click.prevent="handleLogin">
+        <span v-if="!loading">登 录</span>
+        <span v-else>登 录 中...</span>
+      </el-button>
     </el-form>
     <!--  底部  -->
-    <div class="el-login-footer">
-      <span>Copyright © 2018-2024 WSQ All Rights Reserved.</span>
+    <div class="text-xs text-white bottom-2 fixed">
+      <!-- <span>Copyright © 2018-2024 WSQ All Rights Reserved.</span> -->
     </div>
   </div>
 </template>
@@ -88,38 +87,11 @@ getCode()
 <style lang="scss" scoped>
 .login {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url('../assets/images/login-background.jpg');
+  background-image: url('../assets/images/background.jpg');
   background-size: cover;
-}
-
-.login-form {
-  border-radius: 6px;
-  background: #ffffff;
-  width: 400px;
-  padding: 25px 25px 5px 25px;
-}
-
-.login-code {
-  width: 33%;
-  height: 40px;
-  float: right;
-
-  img {
-    cursor: pointer;
-    vertical-align: middle;
-  }
-}
-
-.el-login-footer {
-  line-height: 40px;
-  position: fixed;
-  bottom: 0;
-  text-align: center;
-  color: #fff;
-  font-size: 12px;
-  letter-spacing: 1px;
 }
 </style>
