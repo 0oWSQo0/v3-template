@@ -18,7 +18,6 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column align="center" show-overflow-tooltip label="用户账号" prop="userName" />
         <el-table-column align="center" show-overflow-tooltip label="用户昵称" prop="nickName" />
-        <el-table-column align="center" show-overflow-tooltip label="邮箱" prop="email" />
         <el-table-column align="center" show-overflow-tooltip label="手机" prop="phonenumber" />
         <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
           <template #default="{ row }">
@@ -30,8 +29,8 @@
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-row>
     <template #footer>
-      <el-button type="primary" @click="handleSelectUser">确 定</el-button>
       <el-button @click="visible = false">取 消</el-button>
+      <el-button type="primary" @click="handleSelectUser">确 定</el-button>
     </template>
   </el-dialog>
 </template>
