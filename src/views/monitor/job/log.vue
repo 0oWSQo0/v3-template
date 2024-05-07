@@ -31,7 +31,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-loading="loading" :data="jobLogList" @selectionChange="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
       <el-table-column align="center" show-overflow-tooltip label="任务名称" prop="jobName" />
       <el-table-column align="center" show-overflow-tooltip label="任务组名" prop="jobGroup">
@@ -99,7 +99,7 @@ import { listJobLog, delJobLog, cleanJobLog } from '@/api/monitor/jobLog'
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { sys_common_status, sys_job_group } = proxy.useDict('sys_common_status', 'sys_job_group')
 
-const jobLogList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -116,7 +116,7 @@ const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 async function getList() {
   loading.value = true
   const res: any = await listJobLog(proxy.addDateRange(queryParams.value, dateRange.value))
-  jobLogList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

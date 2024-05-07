@@ -29,7 +29,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-loading="loading" :data="jobList" @selectionChange="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务名称" align="center" prop="jobName" show-overflow-tooltip />
       <el-table-column label="任务组名" align="center" prop="jobGroup">
@@ -206,7 +206,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { sys_job_group, sys_job_status } = proxy.useDict('sys_job_group', 'sys_job_status')
 
 const jobRef = ref()
-const jobList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -231,7 +231,7 @@ const rules = ref<any>({
 async function getList() {
   loading.value = true
   const res: any = await listJob(queryParams.value)
-  jobList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

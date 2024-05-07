@@ -1,22 +1,22 @@
 import request from '@/utils/request'
 
-// 查询${functionName}列表
+// 查询列表
 export function list${BusinessName}(params?: any) {
   return request({ url: '/${moduleName}/${businessName}/list', params })
 }
-// 查询${functionName}详细
+// 查询详细
 export function get${BusinessName}(${pkColumn.javaField}: any) {
   return request({ url: '/${moduleName}/${businessName}/' + ${pkColumn.javaField} })
 }
-// 新增${functionName}
+// 新增
 export function add${BusinessName}(data: any) {
   return request({ url: '/${moduleName}/${businessName}', method: 'post', data })
 }
-// 修改${functionName}
+// 修改
 export function update${BusinessName}(data: any) {
   return request({ url: '/${moduleName}/${businessName}', method: 'put', data })
 }
-// 删除${functionName}
+// 删除
 export function del${BusinessName}(${pkColumn.javaField}: any) {
   return request({ url: '/${moduleName}/${businessName}/' + ${pkColumn.javaField}, method: 'delete' })
 }

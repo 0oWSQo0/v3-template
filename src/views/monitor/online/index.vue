@@ -4,8 +4,8 @@
       <el-form-item label="登录地址" prop="ipaddr">
         <el-input v-model="queryParams.ipaddr" placeholder="请输入登录地址" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="用户名称" prop="userName">
-        <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item label="用户账号" prop="userName">
+        <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -13,7 +13,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table border v-loading="loading" :data="onlineList.slice((queryParams.pageNum - 1) * queryParams.pageSize, queryParams.pageNum * queryParams.pageSize)">
+    <el-table border v-loading="loading" :data="list.slice((queryParams.pageNum - 1) * queryParams.pageSize, queryParams.pageNum * queryParams.pageSize)">
       <el-table-column label="序号" width="55" type="index" align="center">
         <template #default="scope">
           <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
@@ -43,7 +43,7 @@ import { forceLogout, list as initData } from '@/api/monitor/online'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
-const onlineList = ref<any[]>([])
+const list = ref<any[]>([])
 const loading = ref(true)
 const total = ref(0)
 
@@ -53,7 +53,7 @@ const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 async function getList() {
   loading.value = true
   const res: any = await initData(queryParams.value)
-  onlineList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

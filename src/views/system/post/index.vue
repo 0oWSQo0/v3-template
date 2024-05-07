@@ -25,7 +25,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-loading="loading" :data="postList" @selectionChange="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
       <el-table-column align="center" show-overflow-tooltip label="岗位编码" prop="postCode" />
       <el-table-column align="center" show-overflow-tooltip label="岗位名称" prop="postName" />
@@ -43,7 +43,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
 
     <!-- 添加或修改岗位对话框 -->
@@ -82,7 +81,7 @@ const { proxy } = getCurrentInstance()
 const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
-const postList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -104,7 +103,7 @@ const rules = ref<any>({
 async function getList() {
   loading.value = true
   const res: any = await listPost(queryParams.value)
-  postList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

@@ -21,7 +21,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+    <el-table border v-if="refreshTable" v-loading="loading" :data="list" row-key="deptId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip prop="orderNum" label="排序" width="200"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip prop="status" label="状态" width="100">
@@ -102,11 +102,11 @@
 import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from '@/api/system/dept'
 import { FormInstance } from 'element-plus'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
+const { proxy } = getCurrentInstance()
 const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
-const deptList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -129,7 +129,7 @@ const rules = ref<any>({
 async function getList() {
   loading.value = true
   const res: any = await listDept(queryParams.value)
-  deptList.value = proxy.handleTree(res.data, 'deptId')
+  list.value = proxy.handleTree(res.data, 'deptId')
   loading.value = false
 }
 /** 取消按钮 */

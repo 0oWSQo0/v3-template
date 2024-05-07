@@ -74,7 +74,7 @@ directive(app)
 // @ts-ignore
 app.use(ElementPlus, {
   locale: zhCn,
-  size: Cookies.get('size') || 'small' // 支持 large、default、small
+  size: Cookies.get('size') || 'default' // 支持 large、default、small
 })
 
 app.mount('#app')

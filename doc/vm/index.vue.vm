@@ -52,7 +52,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-loading="loading" :data="${businessName}List" @selection-change="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
 #foreach($column in $columns)
 #set($javaField=$column.javaField)
@@ -262,7 +262,7 @@ const { ${dictsNoSymbol} } = proxy.useDict(${dicts})
 #end
 
 const formRef = ref()
-const ${businessName}List = ref<any[]>([])
+const list = ref<any[]>([])
 #if($table.sub)
 const ${subclassName}List = ref<any[]>([])
 #end
@@ -321,7 +321,7 @@ async function getList() {
 #end
 #end
   const res: any = await list${BusinessName}(queryParams.value)
-  ${businessName}List.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

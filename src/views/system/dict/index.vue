@@ -29,7 +29,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-loading="loading" :data="typeList" @selectionChange="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
       <el-table-column align="center" show-overflow-tooltip label="字典名称" prop="dictName" />
       <el-table-column align="center" show-overflow-tooltip label="字典类型">
@@ -90,7 +90,7 @@ const { proxy } = getCurrentInstance()
 const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
-const typeList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -112,7 +112,7 @@ const rules = ref<any>({
 async function getList() {
   loading.value = true
   const res: any = await listType(proxy.addDateRange(queryParams.value, dateRange.value))
-  typeList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

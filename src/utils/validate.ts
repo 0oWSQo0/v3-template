@@ -135,7 +135,7 @@ export const Regular = {
   //台湾身份证
   Taiwan_ID_card:/^[a-zA-Z][0-9]{9}$/,
   //帐号是否合法(以字母开头，长度在6~18之间，只能包含字母、数字和下划线)
-  Account_number:/^[a-zA-Z]\w{5,17}$/,
+  Account_number: (min, max) => new RegExp(`/^[a-zA-Z]\w{${min},${max}}$/`) ,
   //密码强度校验，最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符
   Password_strength_check:/^\S*(?=\S{6,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/,
   //大写字母，小写字母，数字，特殊符号 `@#$%^&*`~()-+=` 中任意3项密码

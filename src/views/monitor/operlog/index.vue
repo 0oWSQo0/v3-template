@@ -31,7 +31,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border ref="operlogRef" v-loading="loading" :data="operlogList" :default-sort="defaultSort" @selectionChange="handleSelectionChange" @sortChange="handleSortChange">
+    <el-table border ref="operlogRef" v-loading="loading" :data="list" :default-sort="defaultSort" @selectionChange="handleSelectionChange" @sortChange="handleSortChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="系统模块" align="center" prop="title" show-overflow-tooltip />
       <el-table-column label="操作类型" align="center" prop="businessType">
@@ -63,42 +63,22 @@
 
     <!-- 操作日志详细 -->
     <el-dialog v-model="open" title="操作日志详细" width="700px" append-to-body draggable>
-      <el-form :model="form" label-width="100px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="操作模块：">{{ form.title }} / {{ typeFormat(form) }}</el-form-item>
-            <el-form-item label="登录信息：">{{ form.operName }} / {{ form.operIp }} / {{ form.operLocation }}</el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="请求地址：">{{ form.operUrl }}</el-form-item>
-            <el-form-item label="请求方式：">{{ form.requestMethod }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="操作方法：">{{ form.method }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="请求参数：">{{ form.operParam }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="返回参数：">{{ form.jsonResult }}</el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="操作状态：">
-              <div v-if="form.status === 0">正常</div>
-              <div v-else-if="form.status === 1">失败</div>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="消耗时间：">{{ form.costTime }}毫秒</el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="操作时间：">{{ form.operTime }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item v-if="form.status === 1" label="异常信息：">{{ form.errorMsg }}</el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+      <el-descriptions border :column="2">
+        <el-descriptions-item label-class-name="w-20" label="操作模块">{{ form.title }} / {{ typeFormat(form) }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="请求地址">{{ form.operUrl }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="登录信息">{{ form.operName }} / {{ form.operIp }} / {{ form.operLocation }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="请求方式">{{ form.requestMethod }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="操作方法" :span="2">{{ form.method }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="请求参数" :span="2">{{ form.operParam }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="返回参数" :span="2">{{ form.jsonResult }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="操作状态"
+          ><div v-if="form.status === 0">正常</div>
+          <div v-else-if="form.status === 1">失败</div></el-descriptions-item
+        >
+        <el-descriptions-item label-class-name="w-20" label="消耗时间">{{ form.costTime }}毫秒</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" label="操作时间">{{ form.operTime }}</el-descriptions-item>
+        <el-descriptions-item label-class-name="w-20" v-if="form.status === 1" label="异常信息">{{ form.errorMsg }}</el-descriptions-item>
+      </el-descriptions>
       <template #footer>
         <el-button @click="open = false">关 闭</el-button>
       </template>
@@ -107,14 +87,14 @@
 </template>
 
 <script setup name="Operlog" lang="ts">
-import { list } from '@/api/monitor/operlog'
+import { listOperlog } from '@/api/monitor/operlog'
 import { Sort } from 'element-plus/es/components/table/src/table/defaults'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
+const { proxy } = getCurrentInstance()
 const { sys_oper_type, sys_common_status } = proxy.useDict('sys_oper_type', 'sys_common_status')
 
 const operlogRef = ref()
-const operlogList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -130,8 +110,8 @@ const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 /** 查询登录日志 */
 async function getList() {
   loading.value = true
-  const res: any = await list(proxy.addDateRange(queryParams.value, dateRange.value))
-  operlogList.value = res.rows
+  const res: any = await listOperlog(proxy.addDateRange(queryParams.value, dateRange.value))
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

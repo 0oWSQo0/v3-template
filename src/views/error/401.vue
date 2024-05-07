@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import errImage from '@/assets/images/401_images/401.gif'
+import errImage from '@/assets/images/error/401.gif'
 
 const route = useRoute()
 const router = useRouter()

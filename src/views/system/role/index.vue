@@ -29,7 +29,7 @@
     </div>
 
     <!-- 表格数据 -->
-    <el-table border v-loading="loading" :data="roleList" @selectionChange="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
       <el-table-column align="center" show-overflow-tooltip label="角色名称" prop="roleName" width="150" />
       <el-table-column align="center" show-overflow-tooltip label="权限字符" prop="roleKey" width="150" />
@@ -159,7 +159,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
-const roleList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -200,7 +200,7 @@ const rules = ref<any>({
 async function getList() {
   loading.value = true
   const res: any = await listRole(proxy.addDateRange(queryParams.value, dateRange.value))
-  roleList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

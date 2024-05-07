@@ -25,7 +25,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table border v-if="refreshTable" v-loading="loading" :data="menuList" row-key="menuId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+    <el-table border v-if="refreshTable" v-loading="loading" :data="list" row-key="menuId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column prop="menuName" show-overflow-tooltip label="菜单名称" width="160"></el-table-column>
       <el-table-column align="center" show-overflow-tooltip label="图标" prop="icon" width="100">
         <template #default="{ row }">
@@ -235,7 +235,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const formRef = ref<FormInstance>()
 const { sys_show_hide, sys_normal_disable } = proxy.useDict('sys_show_hide', 'sys_normal_disable')
 
-const menuList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -258,7 +258,7 @@ const rules = ref<any>({
 async function getList() {
   loading.value = true
   const res: any = await listMenu(queryParams.value)
-  menuList.value = proxy.handleTree(res.data, 'menuId')
+  list.value = proxy.handleTree(res.data, 'menuId')
   loading.value = false
 }
 /** 查询菜单下拉树结构 */

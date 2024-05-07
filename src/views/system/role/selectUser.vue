@@ -2,8 +2,8 @@
   <!-- 授权用户 -->
   <el-dialog v-model="visible" title="选择用户" width="800px" top="5vh" append-to-body draggable>
     <el-form ref="queryRef" :model="queryParams" :inline="true">
-      <el-form-item label="用户名称" prop="userName">
-        <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item label="用户账号" prop="userName">
+        <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="手机号码" prop="phonenumber">
         <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable style="width: 200px" @keyup.enter="handleQuery" />
@@ -14,9 +14,9 @@
       </el-form-item>
     </el-form>
     <el-row>
-      <el-table border ref="refTable" :data="userList" height="260px" @rowClick="clickRow" @selectionChange="handleSelectionChange">
+      <el-table border ref="refTable" :data="list" height="260px" @rowClick="clickRow" @selectionChange="handleSelectionChange">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column align="center" show-overflow-tooltip label="用户名称" prop="userName" />
+        <el-table-column align="center" show-overflow-tooltip label="用户账号" prop="userName" />
         <el-table-column align="center" show-overflow-tooltip label="用户昵称" prop="nickName" />
         <el-table-column align="center" show-overflow-tooltip label="邮箱" prop="email" />
         <el-table-column align="center" show-overflow-tooltip label="手机" prop="phonenumber" />
@@ -49,7 +49,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
-const userList = ref<any[]>([])
+const list = ref<any[]>([])
 const visible = ref(false)
 const total = ref(0)
 const userIds = ref<any[]>([])
@@ -79,7 +79,7 @@ function handleSelectionChange(selection: any[]) {
 // 查询表数据
 async function getList() {
   const res: any = await unallocatedUserList(queryParams)
-  userList.value = res.rows
+  list.value = res.rows
   total.value = res.total
 }
 /** 搜索按钮操作 */

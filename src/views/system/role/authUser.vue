@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
-      <el-form-item label="用户名称" prop="userName">
-        <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
+      <el-form-item label="用户账号" prop="userName">
+        <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="手机号码" prop="phonenumber">
         <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable style="width: 240px" @keyup.enter="handleQuery" />
@@ -20,9 +20,9 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-loading="loading" :data="userList" @selectionChange="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
-      <el-table-column align="center" label="用户名称" prop="userName" show-overflow-tooltip />
+      <el-table-column align="center" label="用户账号" prop="userName" show-overflow-tooltip />
       <el-table-column align="center" label="用户昵称" prop="nickName" show-overflow-tooltip />
       <el-table-column align="center" label="邮箱" prop="email" show-overflow-tooltip />
       <el-table-column align="center" label="手机" prop="phonenumber" show-overflow-tooltip />
@@ -52,7 +52,7 @@ const route = useRoute()
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
-const userList = ref<any[]>([])
+const list = ref<any[]>([])
 const loading = ref(true)
 const showSearch = ref(true)
 const multiple = ref(true)
@@ -71,7 +71,7 @@ const queryParams = reactive<{
 async function getList() {
   loading.value = true
   const res: any = await allocatedUserList(queryParams)
-  userList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

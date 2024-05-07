@@ -29,7 +29,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border v-loading="loading" :data="configList" @selectionChange="handleSelectionChange">
+    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column align="center" show-overflow-tooltip label="参数名称" prop="configName" width="220" />
       <el-table-column align="center" show-overflow-tooltip label="参数键名" prop="configKey" />
@@ -87,7 +87,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const formRef = ref<FormInstance>()
 const { sys_yes_no } = proxy.useDict('sys_yes_no')
 
-const configList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -110,7 +110,7 @@ const rules = ref<any>({
 async function getList() {
   loading.value = true
   const res: any = await listConfig(proxy.addDateRange(queryParams.value, dateRange.value))
-  configList.value = res.rows
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

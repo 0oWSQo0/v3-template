@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 // 查询登录日志列表
-export function list(params?: any) {
+export function listLogininfor(params?: any) {
   return request({ url: '/monitor/logininfor/list', params })
 }
 // 删除登录日志

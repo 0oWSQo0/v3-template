@@ -4,8 +4,8 @@
       <el-form-item label="登录地址" prop="ipaddr">
         <el-input v-model="queryParams.ipaddr" placeholder="请输入登录地址" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="用户名称" prop="userName">
-        <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
+      <el-form-item label="用户账号" prop="userName">
+        <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="登录状态" clearable style="width: 240px">
@@ -27,9 +27,9 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </div>
 
-    <el-table border ref="tableRef" v-loading="loading" :data="logininforList" :default-sort="defaultSort" @selectionChange="handleSelectionChange" @sortChange="handleSortChange">
+    <el-table border ref="tableRef" v-loading="loading" :data="list" :default-sort="defaultSort" @selectionChange="handleSelectionChange" @sortChange="handleSortChange">
       <el-table-column align="center" type="selection" width="55" />
-      <el-table-column align="center" show-overflow-tooltip label="用户名称" prop="userName" sortable="custom" :sort-orders="['descending', 'ascending']" />
+      <el-table-column align="center" show-overflow-tooltip label="用户账号" prop="userName" sortable="custom" :sort-orders="['descending', 'ascending']" />
       <el-table-column align="center" show-overflow-tooltip label="地址" prop="ipaddr" />
       <el-table-column align="center" show-overflow-tooltip label="登录地点" prop="loginLocation" />
       <el-table-column align="center" show-overflow-tooltip label="操作系统" prop="os" />
@@ -48,14 +48,14 @@
 </template>
 
 <script setup name="Logininfor" lang="ts">
-import { list, unlockLogininfor } from '@/api/monitor/logininfor'
+import { listLogininfor, unlockLogininfor } from '@/api/monitor/logininfor'
 import { Sort } from 'element-plus/es/components/table/src/table/defaults'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
+const { proxy } = getCurrentInstance()
 const { sys_common_status } = proxy.useDict('sys_common_status')
 
 const tableRef = ref<any>()
-const logininforList = ref<any[]>([])
+const list = ref<any[]>([])
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref<number[]>([])
@@ -72,8 +72,8 @@ const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 /** 查询登录日志列表 */
 async function getList() {
   loading.value = true
-  const res: any = await list(proxy.addDateRange(queryParams.value, dateRange.value))
-  logininforList.value = res.rows
+  const res: any = await listLogininfor(proxy.addDateRange(queryParams.value, dateRange.value))
+  list.value = res.rows
   total.value = res.total
   loading.value = false
 }

@@ -156,6 +156,5 @@ export function getNormalPath(p: any) {
 
 // 验证是否为blob格式
 export function blobValidate(data: any) {
-  console.log(`output->data`)
   return data.type !== 'application/json'
 }

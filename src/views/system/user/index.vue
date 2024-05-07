@@ -23,8 +23,8 @@
       <!--用户数据-->
       <el-col :span="20" :xs="24">
         <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
-            <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+          <el-form-item label="用户账号" prop="userName">
+            <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable style="width: 200px" @keyup.enter="handleQuery" />
           </el-form-item>
           <el-form-item label="手机号码" prop="phonenumber">
             <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable style="width: 200px" @keyup.enter="handleQuery" />
@@ -50,9 +50,9 @@
           <right-toolbar v-model:showSearch="showSearch" :columns="columns" @queryTable="getList"></right-toolbar>
         </div>
 
-        <el-table border v-loading="loading" :data="userList" @selectionChange="handleSelectionChange">
+        <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column align="center" show-overflow-tooltip v-if="columns[0].visible" key="userName" label="用户名称" prop="userName" />
+          <el-table-column align="center" show-overflow-tooltip v-if="columns[0].visible" key="userName" label="用户账号" prop="userName" />
           <el-table-column align="center" show-overflow-tooltip v-if="columns[1].visible" key="nickName" label="用户昵称" prop="nickName" />
           <el-table-column align="center" show-overflow-tooltip v-if="columns[2].visible" key="deptName" label="部门" prop="dept.deptName" />
           <el-table-column align="center" show-overflow-tooltip v-if="columns[3].visible" key="phonenumber" label="手机号码" prop="phonenumber" width="120" />
@@ -108,8 +108,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
+            <el-form-item v-if="form.userId == undefined" label="用户账号" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入用户账号" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -169,13 +169,14 @@
 <script setup name="User" lang="ts">
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from '@/api/system/user'
 import { ElTree, FormInstance } from 'element-plus'
+import { Regular } from '@/utils/validate'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance() as any
 const formRef = ref<FormInstance>()
 const { sys_normal_disable, sys_user_sex } = proxy.useDict('sys_normal_disable', 'sys_user_sex')
 const deptTreeRef = ref<InstanceType<typeof ElTree>>()
-const userList = ref<any[]>([])
+const list = ref<any[]>([])
 const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
@@ -192,7 +193,7 @@ const roleOptions = ref<any[]>([])
 
 // 列显隐信息
 const columns = ref([
-  { key: 0, label: `用户名称`, visible: true },
+  { key: 0, label: `用户账号`, visible: true },
   { key: 1, label: `用户昵称`, visible: true },
   { key: 2, label: `部门`, visible: true },
   { key: 3, label: `手机号码`, visible: true },
@@ -204,8 +205,9 @@ const form = ref<any>({})
 const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 const rules = ref<any>({
   userName: [
-    { required: true, message: '用户名称不能为空', trigger: 'change' },
-    { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'change' }
+    { required: true, message: '用户账号不能为空', trigger: 'change' },
+    { min: 4, max: 20, message: '用户账号长度必须介于 4 和 20 之间', trigger: 'change' },
+    { pattern: Regular.Account_number(4, 20), message: '用户名账号以字母开头，只能包含字母、数字和下划线' }
   ],
   nickName: [{ required: true, message: '用户昵称不能为空', trigger: 'change' }],
   password: [
@@ -235,7 +237,7 @@ async function getList() {
   loading.value = true
   const res: any = await listUser(proxy.addDateRange(queryParams.value, dateRange.value))
   loading.value = false
-  userList.value = res.rows
+  list.value = res.rows
   total.value = res.total
 }
 /** 节点单击事件 */
