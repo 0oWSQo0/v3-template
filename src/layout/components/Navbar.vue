@@ -8,12 +8,12 @@
       <div class="avatar-container">
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="h-full flex items-center">
-            <span>{{ userStore.name }}</span>
+            <span>{{ userStore.userInfo.name }}</span>
             <el-icon><caret-bottom /></el-icon>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item divided command="logout">
+              <el-dropdown-item command="logout">
                 <span>退出登录</span>
               </el-dropdown-item>
             </el-dropdown-menu>

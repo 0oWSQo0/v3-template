@@ -81,20 +81,6 @@ export const constantRoutes: RouteRecordRaw[] = [
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
-  },
-  {
-    path: '/user',
-    component: Layout,
-    hidden: true,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'profile',
-        component: () => import('@/views/system/user/profile/index.vue'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
-      }
-    ]
   }
 ]
 
@@ -139,20 +125,6 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/system/dict/data.vue'),
         name: 'Data',
         meta: { title: '字典数据', activeMenu: '/system/dict' }
-      }
-    ]
-  },
-  {
-    path: '/monitor/job-log',
-    component: Layout,
-    hidden: true,
-    permissions: ['monitor:job:list'],
-    children: [
-      {
-        path: 'index/:jobId(\\d+)',
-        component: () => import('@/views/monitor/job/log.vue'),
-        name: 'JobLog',
-        meta: { title: '调度日志', activeMenu: '/monitor/job' }
       }
     ]
   },
