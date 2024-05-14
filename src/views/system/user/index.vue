@@ -65,7 +65,7 @@
           <el-table-column align="center" show-overflow-tooltip label="操作" width="300">
             <template #default="{ row }">
               <template v-if="row.userId !== 1">
-                <el-button link v-hasPermi="['system:user:edit']" type="primary" icon="Edit" @click="handleUpdate(row)">修改</el-button>
+                <el-button link v-hasPermi="['system:user:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
                 <el-button link v-hasPermi="['system:user:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
                 <el-button link v-hasPermi="['system:user:resetPwd']" type="primary" icon="Key" @click="handleResetPwd(row)">重置密码</el-button>
                 <el-button link v-hasPermi="['system:user:edit']" type="primary" icon="CircleCheck" @click="handleAuthRole(row)">分配角色</el-button>

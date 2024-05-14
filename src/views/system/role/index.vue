@@ -43,10 +43,10 @@
       <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
         <template #default="{ row }">
           <el-tooltip v-if="row.roleId !== 1" content="修改" placement="top">
-            <el-button link v-hasPermi="['system:role:edit']" type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
+            <el-button link v-hasPermi="['system:role:edit']" type="success" icon="Edit" @click="handleUpdate(row)"></el-button>
           </el-tooltip>
           <el-tooltip v-if="row.roleId !== 1" content="删除" placement="top">
-            <el-button link v-hasPermi="['system:role:remove']" type="primary" icon="Delete" @click="handleDelete(row)"></el-button>
+            <el-button link v-hasPermi="['system:role:remove']" type="danger" icon="Delete" @click="handleDelete(row)"></el-button>
           </el-tooltip>
           <el-tooltip v-if="row.roleId !== 1" content="数据权限" placement="top">
             <el-button link v-hasPermi="['system:role:edit']" type="primary" icon="CircleCheck" @click="handleDataScope(row)"></el-button>
