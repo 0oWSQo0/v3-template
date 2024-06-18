@@ -128,7 +128,7 @@ const listClassOptions = ref([
 ])
 
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 const rules = ref<any>({
   dictLabel: [{ required: true, message: '数据标签不能为空', trigger: 'change' }],
   dictValue: [{ required: true, message: '数据键值不能为空', trigger: 'change' }],
@@ -181,6 +181,7 @@ function handleClose() {
 }
 /** 重置按钮操作 */
 function resetQuery() {
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   queryParams.value.dictType = defaultDictType
   handleQuery()

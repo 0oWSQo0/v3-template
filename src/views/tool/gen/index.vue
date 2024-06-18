@@ -174,6 +174,7 @@ function openImportTable() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }

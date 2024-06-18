@@ -285,7 +285,7 @@ const daterange${AttrName} = ref<any[]>([])
 #end
 
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 const rules = ref<any>({
   #foreach ($column in $columns)
 #if($column.required)
@@ -355,6 +355,7 @@ function resetQuery() {
   daterange${AttrName}.value = []
 #end
 #end
+  queryParams.value = {}
   proxy.resetForm("queryRef")
   handleQuery()
 }

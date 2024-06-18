@@ -77,7 +77,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
+              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password autocomplete="new-password" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -141,12 +141,12 @@ const columns = ref([
 ])
 
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 const rules = ref<any>({
   userName: [
     { required: true, message: '用户账号不能为空', trigger: 'change' },
     { min: 4, max: 20, message: '用户账号长度必须介于 4 和 20 之间', trigger: 'change' },
-    { pattern: Regular.Account_number(4, 20), message: '用户名账号以字母开头，只能包含字母、数字和下划线' }
+    { pattern: Regular.Account_number(3, 19), message: '用户名账号以字母开头，只能包含字母、数字和下划线' }
   ],
   nickName: [{ required: true, message: '用户昵称不能为空', trigger: 'change' }],
   password: [
@@ -173,6 +173,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }

@@ -310,6 +310,7 @@ function handleQuery() {
 }
 /** 重置按钮操作 */
 function resetQuery() {
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }

@@ -8,7 +8,7 @@
       <div class="avatar-container">
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="h-full flex items-center">
-            <span>{{ userStore.userInfo.name }}</span>
+            <span>{{ userInfo.nickName }}</span>
             <el-icon><caret-bottom /></el-icon>
           </div>
           <template #dropdown>
@@ -34,6 +34,7 @@ import useSettingsStore from '@/store/modules/settings'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
+const { userInfo } = userStore
 const settingsStore = useSettingsStore()
 
 function toggleSideBar() {

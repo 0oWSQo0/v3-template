@@ -102,7 +102,7 @@ const title = ref('')
 const dateRange = ref<any>([])
 
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 const rules = ref<any>({
   dictName: [{ required: true, message: '字典名称不能为空', trigger: 'change' }],
   dictType: [{ required: true, message: '字典类型不能为空', trigger: 'change' }]
@@ -134,6 +134,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }

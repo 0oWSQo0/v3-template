@@ -39,12 +39,7 @@ const tables = ref<any[]>([])
 const dbTableList = ref<any[]>([])
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
-const queryParams = reactive({
-  pageNum: 1,
-  pageSize: 10,
-  tableName: undefined,
-  tableComment: undefined
-})
+const queryParams = ref<any>({})
 
 const emit = defineEmits(['ok'])
 
@@ -70,11 +65,12 @@ function getList() {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.pageNum = 1
+  queryParams.value.pageNum = 1
   getList()
 }
 /** 重置按钮操作 */
 function resetQuery() {
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }

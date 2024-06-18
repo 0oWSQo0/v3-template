@@ -135,7 +135,7 @@ export const Regular = {
   //台湾身份证
   Taiwan_ID_card:/^[a-zA-Z][0-9]{9}$/,
   //帐号是否合法(以字母开头，长度在6~18之间，只能包含字母、数字和下划线)
-  Account_number: (min, max) => new RegExp(`/^[a-zA-Z]\w{${min},${max}}$/`) ,
+  Account_number: (min: number = 8, max: number = 20) => new RegExp(`/^[a-zA-Z]\w{${min},${max}}$/`) ,
   //密码强度校验，最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符
   Password_strength_check:/^\S*(?=\S{6,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/,
   //大写字母，小写字母，数字，特殊符号 `@#$%^&*`~()-+=` 中任意3项密码
@@ -156,4 +156,6 @@ export const Regular = {
   Chinese_mailbox:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
   //域名(非网址, 不包含协议)
   Domain_name:/^([0-9a-zA-Z-]{1,}\.)+([a-zA-Z]{2,})$/,
+  // PIN码校验(至少包含一个字母不区分大小写,至少包含一个数字,至少包含一个特殊字符（包括下划线和小数点）,总长度在8到20个字符之间)
+  checkPin: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&_.-])[A-Za-z\d@$!%*?&_.-]{8,20}$/
 }

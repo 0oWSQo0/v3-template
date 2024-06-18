@@ -9,26 +9,15 @@
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1
-          v-else
-          class="sidebar-title"
-          :style="{
-            color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor
-          }"
-        >
+        <div v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">
           {{ title }}
-        </h1>
+        </div>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1
-          class="sidebar-title"
-          :style="{
-            color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor
-          }"
-        >
+        <div class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">
           {{ title }}
-        </h1>
+        </div>
       </router-link>
     </transition>
   </div>
@@ -39,7 +28,6 @@ import variables from '@/assets/styles/variables.module.scss'
 import logo from '@/assets/images/logo/logo.png'
 import useSettingsStore from '@/store/modules/settings'
 import settings from '@/settings'
-// import collapse from 'element-plus/es/components/collapse';
 
 defineProps({
   collapse: {
@@ -86,17 +74,11 @@ const sideTheme = computed(() => settingsStore.sideTheme)
 
     & .sidebar-title {
       display: inline-block;
-      margin: 0;
       color: #fff;
       font-weight: 600;
       line-height: 50px;
-      font-size: 14px;
-      font-family:
-        Avenir,
-        Helvetica Neue,
-        Arial,
-        Helvetica,
-        sans-serif;
+      font-size: 20px;
+      font-family: cursive, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }
   }

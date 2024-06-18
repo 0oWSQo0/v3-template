@@ -105,7 +105,7 @@ const dateRange = ref<any>([])
 const defaultSort = ref<Sort>({ prop: 'operTime', order: 'descending' })
 
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 
 /** 查询登录日志 */
 async function getList() {
@@ -127,6 +127,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   queryParams.value.pageNum = 1
   operlogRef.value.sort(defaultSort.value.prop, defaultSort.value.order)

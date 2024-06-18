@@ -53,17 +53,11 @@ const visible = ref(false)
 const total = ref(0)
 const userIds = ref<any[]>([])
 
-const queryParams = reactive<{
-  pageNum: number
-  pageSize: number
-  roleId?: any
-  userName?: any
-  phonenumber?: any
-}>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 
 // 显示弹框
 function show() {
-  queryParams.roleId = props.roleId
+  queryParams.value.roleId = props.roleId
   getList()
   visible.value = true
 }
@@ -83,18 +77,19 @@ async function getList() {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.pageNum = 1
+  queryParams.value.pageNum = 1
   getList()
 }
 /** 重置按钮操作 */
 function resetQuery() {
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }
 const emit = defineEmits(['ok'])
 /** 选择授权用户操作 */
 async function handleSelectUser() {
-  const roleId = queryParams.roleId
+  const roleId = queryParams.value.roleId
   const uIds = userIds.value.join(',')
   if (uIds === '') {
     proxy.$modal.msgError('请选择要分配的用户')

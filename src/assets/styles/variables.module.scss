@@ -1,16 +1,6 @@
-// base color
-$blue: #324157;
-$light-blue: #3a71a8;
-$red: #c03639;
-$pink: #e65d6e;
-$green: #30b08f;
-$tiffany: #4ab7bd;
-$yellow: #fec171;
-$panGreen: #30b08f;
-
 // 默认菜单主题风格
 $base-menu-color: #bfcbd9;
-$base-menu-color-active: #f4f4f5;
+$base-menu-color-active: #409eff;
 $base-menu-background: #304156;
 $base-logo-title-color: #ffffff;
 
@@ -19,7 +9,9 @@ $base-menu-light-background: #ffffff;
 $base-logo-light-title-color: #001529;
 
 $base-sub-menu-background: #1f2d3d;
-$base-sub-menu-hover: #001528;
+$base-sub-menu-hover: #409eff;
+// hover下菜单字体颜色
+$base-sub-menu-text-hover: #fff;
 
 // 自定义暗色菜单风格
 /**

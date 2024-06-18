@@ -99,7 +99,7 @@ const title = ref('')
 const dateRange = ref<any>([])
 
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 const rules = ref<any>({
   configName: [{ required: true, message: '参数名称不能为空', trigger: 'change' }],
   configKey: [{ required: true, message: '参数键名不能为空', trigger: 'change' }],
@@ -132,6 +132,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }

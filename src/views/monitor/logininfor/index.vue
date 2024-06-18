@@ -67,7 +67,7 @@ const dateRange = ref<any>([])
 const defaultSort = ref<Sort>({ prop: 'loginTime', order: 'descending' })
 
 // 查询参数
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 
 /** 查询登录日志列表 */
 async function getList() {
@@ -85,8 +85,8 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
+  queryParams.value = {}
   proxy.resetForm('queryRef')
-  queryParams.value.pageNum = 1
   tableRef.value.sort(defaultSort.value.prop, defaultSort.value.order)
 }
 /** 多选框选中数据 */

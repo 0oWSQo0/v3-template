@@ -189,7 +189,7 @@ const dataScopeOptions = ref([
 ])
 
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
+const queryParams = ref<any>({})
 const rules = ref<any>({
   roleName: [{ required: true, message: '角色名称不能为空', trigger: 'change' }],
   roleKey: [{ required: true, message: '权限字符不能为空', trigger: 'change' }],
@@ -212,6 +212,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
+  queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }

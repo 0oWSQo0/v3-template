@@ -11,7 +11,6 @@
   }
 
   .sidebar-container {
-    -webkit-transition: width 0.28s;
     transition: width 0.28s;
     width: $base-sidebar-width !important;
     background-color: $base-menu-background;
@@ -83,25 +82,32 @@
       display: inline-block !important;
     }
 
-    // menu hover
+    // 一级无二级菜单，，和一级有二级菜单hover样式
     .sub-menu-title-noDropdown,
     .el-sub-menu__title {
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        color: $base-sub-menu-text-hover !important;
+        background-color: $base-sub-menu-hover !important;
       }
     }
-
+    // 暗黑主题下
     & .theme-dark .is-active > .el-sub-menu__title {
       color: $base-menu-color-active !important;
     }
-
+    // 白色主题下
     & .nest-menu .el-sub-menu > .el-sub-menu__title,
     & .el-sub-menu .el-menu-item {
       min-width: $base-sidebar-width !important;
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        color: $base-sub-menu-text-hover !important;
+        background-color: $base-sub-menu-hover !important;
       }
+    }
+
+    .el-menu-item.is-active {
+      color: $base-sub-menu-text-hover !important;
+      background-color: $base-menu-color-active !important;
     }
 
     & .theme-dark .nest-menu .el-sub-menu > .el-sub-menu__title,
@@ -174,7 +180,7 @@
     min-width: $base-sidebar-width !important;
   }
 
-  // mobile responsive
+  // 移动端样式
   .mobile {
     .main-container {
       margin-left: 0px;
@@ -202,7 +208,7 @@
   }
 }
 
-// when menu collapsed
+// 菜单收缩后的样式
 .el-menu--vertical {
   & > .el-menu {
     .svg-icon {
@@ -213,8 +219,8 @@
   .nest-menu .el-sub-menu > .el-sub-menu__title,
   .el-menu-item {
     &:hover {
-      // you can use $sub-menuHover
-      background-color: rgba(0, 0, 0, 0.06) !important;
+      // 菜单收缩后二级菜单hover样式
+      background-color: $base-sub-menu-hover !important;
     }
   }
 
@@ -223,17 +229,16 @@
     max-height: 100vh;
     overflow-y: auto;
 
-    &::-webkit-scrollbar-track-piece {
-      background: #d3dce6;
-    }
-
-    &::-webkit-scrollbar {
+    ::-webkit-scrollbar {
       width: 6px;
+      height: 6px;
     }
-
-    &::-webkit-scrollbar-thumb {
-      background: #99a9bf;
-      border-radius: 20px;
+    ::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #c0c0c0;
+      border-radius: 3px;
     }
   }
 }
