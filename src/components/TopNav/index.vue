@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { constantRoutes } from '@/router'
+import { staticRouter } from '@/router'
 import { isHttp } from '@/utils/validate'
 import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
@@ -74,7 +74,7 @@ const childrenMenus = computed(() => {
       childrenMenus.push(router.children[item as any])
     }
   })
-  return constantRoutes.concat(childrenMenus)
+  return staticRouter.concat(childrenMenus)
 })
 
 // 默认激活的菜单

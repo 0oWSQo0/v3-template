@@ -1,7 +1,6 @@
 <template>
   <div :class="{ hidden: hidden }" class="p-2 my-1 flex justify-end">
     <el-pagination
-      small
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
       :background="background"

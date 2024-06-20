@@ -40,20 +40,10 @@ declare module 'vue-router' {
     title?: string
   }
 }
-
-// 公共路由
-export const constantRoutes: RouteRecordRaw[] = [
-  {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index.vue')
-      }
-    ]
-  },
+/**
+ * staticRouter (静态路由)
+ */
+export const staticRouter: RouteRecordRaw[] = [
   {
     path: '/login',
     component: () => import('@/views/login.vue'),
@@ -83,6 +73,19 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/chart',
+    component: Layout,
+    meta: { title: 'echarts', icon: 'dashboard' },
+    children: [
+      {
+        path: 'pieChart',
+        component: () => import('@/views/learns/pieChart/index.vue'),
+        name: 'pieChart',
+        meta: { title: '饼图', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
     path: '/user',
     component: Layout,
     hidden: true,
@@ -97,7 +100,6 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   }
 ]
-
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes: RouteRecordRaw[] = [
   {
@@ -174,7 +176,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: constantRoutes,
+  routes: staticRouter,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition

@@ -1,5 +1,6 @@
 import auth from '@/plugins/auth'
-import router, { constantRoutes, dynamicRoutes } from '@/router'
+import router, { dynamicRoutes } from '@/router'
+import { staticRouter } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index.vue'
 import ParentView from '@/components/ParentView/index.vue'
@@ -27,10 +28,10 @@ const usePermissionStore = defineStore('permission', {
   actions: {
     setRoutes(routes: RouteRecordRaw[]) {
       this.addRoutes = routes
-      this.routes = constantRoutes.concat(routes)
+      this.routes = staticRouter.concat(routes)
     },
     setDefaultRoutes(routes: RouteRecordRaw[]) {
-      this.defaultRoutes = constantRoutes.concat(routes)
+      this.defaultRoutes = staticRouter.concat(routes)
     },
     setTopbarRoutes(routes: RouteRecordRaw[]) {
       this.topbarRouters = routes
@@ -53,7 +54,7 @@ const usePermissionStore = defineStore('permission', {
             router.addRoute(route)
           })
           this.setRoutes(rewriteRoutes)
-          this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
+          this.setSidebarRouters(staticRouter.concat(sidebarRoutes))
           this.setDefaultRoutes(sidebarRoutes)
           this.setTopbarRoutes(defaultRoutes)
           resolve(rewriteRoutes)

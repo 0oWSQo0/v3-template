@@ -1,6 +1,7 @@
 import defaultSettings from '@/settings'
 import { useDynamicTitle } from '@/utils/dynamicTitle'
 import { defineStore } from 'pinia'
+import piniaPersistConfig from '@/store/helper/persist'
 
 const { sideTheme, showSettings, topNav, tagsView, fixedHeader, sidebarLogo, dynamicTitle } = defaultSettings
 
@@ -32,7 +33,8 @@ const useSettingsStore = defineStore('settings', {
       this.title = title
       useDynamicTitle()
     }
-  }
+  },
+  persist: piniaPersistConfig('settings')
 })
 
 export default useSettingsStore

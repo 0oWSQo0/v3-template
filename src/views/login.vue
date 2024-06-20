@@ -3,17 +3,17 @@
     <h2 class="text-center mb-4 text-5xl tracking-wider">后台管理系统</h2>
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="p-6 shadow-lg rounded-lg w-96 shadow-gray-800">
       <el-form-item prop="username">
-        <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="请输入账号">
+        <el-input v-model="loginForm.username" type="text" size="large" placeholder="请输入账号">
           <template #prefix><i-material-symbols-light-account-circle-outline style="font-size: 20px" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" placeholder="请输入密码" @keyup.enter="handleLogin">
+        <el-input v-model="loginForm.password" type="password" size="large" auto-complete="new-password" show-password placeholder="请输入密码" @keyup.enter="handleLogin">
           <template #prefix><i-material-symbols-light-lock-outline style="font-size: 20px" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="code" v-if="captchaEnabled">
-        <el-input v-model="loginForm.code" size="large" auto-complete="off" placeholder="请输入验证码" style="width: 67%" @keyup.enter="handleLogin">
+        <el-input v-model="loginForm.code" size="large" placeholder="请输入验证码" style="width: 67%" @keyup.enter="handleLogin">
           <template #prefix><i-material-symbols-light-verified-user-outline style="font-size: 20px" /></template>
         </el-input>
         <div class="h-10 float-right w-[33%]">

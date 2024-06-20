@@ -4,18 +4,13 @@ import defAva from '@/assets/images/profile.png'
 import { defineStore } from 'pinia'
 
 const useUserStore = defineStore('user', {
-  state: (): {
-    token?: string
-    name: string
-    avatar: string
-    roles: any[]
-    permissions: string[]
-  } => ({
+  state: (): any => ({
     token: getToken(),
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    userInfo: {}
   }),
   actions: {
     // 登录
@@ -48,7 +43,7 @@ const useUserStore = defineStore('user', {
             } else {
               this.roles = ['ROLE_DEFAULT']
             }
-            this.name = user.userName
+            this.userInfo = user
             this.avatar = avatar
             resolve(res)
           })
