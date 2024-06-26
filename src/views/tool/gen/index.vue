@@ -203,7 +203,7 @@ function handleEditTable(row: any) {
 /** 删除按钮操作 */
 async function handleDelete(row: any) {
   const tableIds = row.tableId || ids.value
-  await proxy.$modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？')
+  await proxy.$modal.confirm('是否确认删除数据项？')
   await delTable(tableIds)
   getList()
   proxy.$modal.msgSuccess('删除成功')
