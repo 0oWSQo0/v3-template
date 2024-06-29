@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
+    <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="菜单名称" prop="menuName">
-        <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="菜单状态" clearable style="width: 200px">
+        <el-select v-model="queryParams.status" placeholder="菜单状态" clearable>
           <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -22,7 +22,7 @@
       <el-col :span="1.5">
         <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
       </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </el-row>
 
     <el-table border v-if="refreshTable" v-loading="loading" :data="list" row-key="menuId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
@@ -231,50 +231,55 @@ import SvgIcon from '@/components/SvgIcon/index.vue'
 import IconSelect from '@/components/IconSelect/index.vue'
 import { ClickOutside as vClickOutside } from 'element-plus'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const formRef = ref<FormInstance>()
+const { proxy } = getCurrentInstance()
 const { sys_show_hide, sys_normal_disable } = proxy.useDict('sys_show_hide', 'sys_normal_disable')
 
+/**
+ * 列表
+ */
 const list = ref<any[]>([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
-const title = ref('')
-const menuOptions = ref<any[]>([])
 const isExpandAll = ref(false)
 const refreshTable = ref(true)
-const showChooseIcon = ref(false)
-const iconSelectRef = ref<any>(null)
-
-const form = ref<any>({})
 const queryParams = ref<any>({})
-const rules = ref<any>({
-  menuName: [{ required: true, message: '菜单名称不能为空', trigger: 'change' }],
-  orderNum: [{ required: true, message: '菜单顺序不能为空', trigger: 'change' }],
-  path: [{ required: true, message: '路由地址不能为空', trigger: 'change' }]
-})
 
-/** 查询菜单列表 */
 async function getList() {
   loading.value = true
   const res: any = await listMenu(queryParams.value)
   list.value = proxy.handleTree(res.data, 'menuId')
   loading.value = false
 }
-/** 查询菜单下拉树结构 */
-async function getTreeselect() {
-  menuOptions.value = []
-  const res: any = await listMenu()
-  const menu: any = { menuId: 0, menuName: '主类目', children: [] }
-  menu.children = proxy.handleTree(res.data, 'menuId')
-  menuOptions.value.push(menu)
+
+function handleQuery() {
+  getList()
 }
-/** 取消按钮 */
+
+function resetQuery() {
+  proxy.resetForm('queryRef')
+  handleQuery()
+}
+
+/**
+ * 新增修改
+ */
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const title = ref('')
+const form = ref<any>({})
+const rules = ref<any>({
+  menuName: [{ required: true, message: '菜单名称不能为空', trigger: 'change' }],
+  orderNum: [{ required: true, message: '菜单顺序不能为空', trigger: 'change' }],
+  path: [{ required: true, message: '路由地址不能为空', trigger: 'change' }]
+})
+const menuOptions = ref<any[]>([])
+const showChooseIcon = ref(false)
+const iconSelectRef = ref<any>(null)
 function cancel() {
   open.value = false
   reset()
 }
-/** 表单重置 */
+
 function reset() {
   form.value = {
     parentId: 0,
@@ -285,6 +290,52 @@ function reset() {
     status: '0'
   }
   proxy.resetForm('formRef')
+}
+/** 查询菜单下拉树结构 */
+async function getTreeselect() {
+  menuOptions.value = []
+  const res: any = await listMenu()
+  const menu: any = { menuId: 0, menuName: '主类目', children: [] }
+  menu.children = proxy.handleTree(res.data, 'menuId')
+  menuOptions.value.push(menu)
+}
+function handleAdd(row: any) {
+  reset()
+  getTreeselect()
+  form.value.parentId = row?.menuId || 0
+  open.value = true
+  title.value = '新增'
+}
+
+async function handleUpdate(row: any) {
+  reset()
+  await getTreeselect()
+  const res: any = await getMenu(row.menuId)
+  form.value = res.data
+  open.value = true
+  title.value = '修改'
+}
+
+async function submitForm() {
+  await formRef.value.validate()
+  if (form.value.menuId !== undefined) {
+    await updateMenu(form.value)
+    proxy.$modal.msgSuccess('修改成功')
+  } else {
+    await addMenu(form.value)
+    proxy.$modal.msgSuccess('新增成功')
+  }
+  open.value = false
+  getList()
+}
+
+/** 展开/折叠操作 */
+function toggleExpandAll() {
+  refreshTable.value = false
+  isExpandAll.value = !isExpandAll.value
+  nextTick(() => {
+    refreshTable.value = true
+  })
 }
 /** 展示下拉图标 */
 function showSelectIcon() {
@@ -304,58 +355,10 @@ function hideSelectIcon(event: any) {
     showChooseIcon.value = false
   }
 }
-/** 搜索按钮操作 */
-function handleQuery() {
-  getList()
-}
-/** 重置按钮操作 */
-function resetQuery() {
-  proxy.resetForm('queryRef')
-  handleQuery()
-}
-/** 新增按钮操作 */
-function handleAdd(row: any) {
-  reset()
-  getTreeselect()
-  if (row != null && row.menuId) {
-    form.value.parentId = row.menuId
-  } else {
-    form.value.parentId = 0
-  }
-  open.value = true
-  title.value = '新增'
-}
-/** 展开/折叠操作 */
-function toggleExpandAll() {
-  refreshTable.value = false
-  isExpandAll.value = !isExpandAll.value
-  nextTick(() => {
-    refreshTable.value = true
-  })
-}
-/** 修改按钮操作 */
-async function handleUpdate(row: any) {
-  reset()
-  await getTreeselect()
-  const res: any = await getMenu(row.menuId)
-  form.value = res.data
-  open.value = true
-  title.value = '修改'
-}
-/** 提交按钮 */
-async function submitForm() {
-  await formRef.value.validate()
-  if (form.value.menuId !== undefined) {
-    await updateMenu(form.value)
-    proxy.$modal.msgSuccess('修改成功')
-  } else {
-    await addMenu(form.value)
-    proxy.$modal.msgSuccess('新增成功')
-  }
-  open.value = false
-  getList()
-}
-/** 删除按钮操作 */
+
+/**
+ * 删除
+ */
 async function handleDelete(row: any) {
   await proxy.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项?')
   await delMenu(row.menuId)

@@ -1,16 +1,16 @@
 <template>
   <div>
-    <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
+    <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="部门名称" prop="deptName">
-        <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable @keyup.enter="getList" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="部门状态" clearable style="width: 200px">
+        <el-select v-model="queryParams.status" placeholder="部门状态" clearable>
           <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="Search" @click="getList">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -18,7 +18,7 @@
     <div class="mb-2 flex justify-between">
       <el-button plain type="primary" icon="Plus" v-hasPermi="['system:dept:add']" @click="handleAdd">新增</el-button>
       <el-button plain type="info" icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
 
     <el-table border v-if="refreshTable" v-loading="loading" :data="list" row-key="deptId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
@@ -103,20 +103,37 @@ import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild }
 import { FormInstance } from 'element-plus'
 
 const { proxy } = getCurrentInstance()
-const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
+/**
+ * 列表
+ */
 const list = ref<any[]>([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
-const title = ref('')
-const deptOptions = ref<any[]>([])
 const isExpandAll = ref(true)
 const refreshTable = ref(true)
-
-const form = ref<any>({})
 const queryParams = ref<any>({})
+
+async function getList() {
+  loading.value = true
+  const res: any = await listDept(queryParams.value)
+  list.value = proxy.handleTree(res.data, 'deptId')
+  loading.value = false
+}
+
+function resetQuery() {
+  proxy.resetForm('queryRef')
+  getList()
+}
+
+/**
+ * 新增修改
+ */
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const title = ref('')
+const form = ref<any>({})
 const rules = ref<any>({
   parentId: [{ required: true, message: '上级部门不能为空', trigger: 'change' }],
   deptName: [{ required: true, message: '部门名称不能为空', trigger: 'change' }],
@@ -124,37 +141,18 @@ const rules = ref<any>({
   email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }],
   phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'change' }]
 })
+const deptOptions = ref<any[]>([])
 
-/** 查询部门列表 */
-async function getList() {
-  loading.value = true
-  const res: any = await listDept(queryParams.value)
-  list.value = proxy.handleTree(res.data, 'deptId')
-  loading.value = false
-}
-/** 取消按钮 */
 function cancel() {
   open.value = false
   reset()
 }
-/** 表单重置 */
+
 function reset() {
-  form.value = {
-    orderNum: 0,
-    status: '0'
-  }
+  form.value = { orderNum: 0, status: '0' }
   proxy.resetForm('formRef')
 }
-/** 搜索按钮操作 */
-function handleQuery() {
-  getList()
-}
-/** 重置按钮操作 */
-function resetQuery() {
-  proxy.resetForm('queryRef')
-  handleQuery()
-}
-/** 新增按钮操作 */
+
 async function handleAdd(row: any) {
   reset()
   const res: any = await listDept()
@@ -165,15 +163,7 @@ async function handleAdd(row: any) {
   open.value = true
   title.value = '新增'
 }
-/** 展开/折叠操作 */
-function toggleExpandAll() {
-  refreshTable.value = false
-  isExpandAll.value = !isExpandAll.value
-  nextTick(() => {
-    refreshTable.value = true
-  })
-}
-/** 修改按钮操作 */
+
 async function handleUpdate(row: any) {
   reset()
   const res: any = await listDeptExcludeChild(row.deptId)
@@ -183,7 +173,7 @@ async function handleUpdate(row: any) {
   open.value = true
   title.value = '修改'
 }
-/** 提交按钮 */
+
 async function submitForm() {
   await formRef.value.validate()
   if (form.value.deptId !== undefined) {
@@ -196,12 +186,23 @@ async function submitForm() {
   open.value = false
   getList()
 }
-/** 删除按钮操作 */
+/** 展开/折叠操作 */
+function toggleExpandAll() {
+  refreshTable.value = false
+  isExpandAll.value = !isExpandAll.value
+  nextTick(() => {
+    refreshTable.value = true
+  })
+}
+
+/**
+ * 删除
+ */
 async function handleDelete(row: any) {
   await proxy.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项?')
   await delDept(row.deptId)
-  getList()
   proxy.$modal.msgSuccess('删除成功')
+  getList()
 }
 
 getList()

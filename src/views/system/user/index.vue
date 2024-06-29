@@ -22,15 +22,15 @@
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
-        <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
+        <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
           <el-form-item label="用户账号" prop="userName">
-            <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable style="width: 200px" @keyup.enter="handleQuery" />
+            <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable @keyup.enter="handleQuery" />
           </el-form-item>
           <el-form-item label="手机号码" prop="phonenumber">
-            <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable style="width: 200px" @keyup.enter="handleQuery" />
+            <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
           </el-form-item>
           <el-form-item label="状态" prop="status">
-            <el-select v-model="queryParams.status" placeholder="用户状态" clearable style="width: 200px">
+            <el-select v-model="queryParams.status" placeholder="用户状态" clearable>
               <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
             </el-select>
           </el-form-item>
@@ -44,10 +44,10 @@
         </el-form>
 
         <div class="mb-2 flex justify-between">
-          <el-button v-hasPermi="['system:user:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-          <el-button v-hasPermi="['system:user:edit']" type="success" plain icon="Edit" :disabled="single" @click="handleUpdate">修改</el-button>
-          <el-button v-hasPermi="['system:user:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
-          <right-toolbar v-model:showSearch="showSearch" :columns="columns" @queryTable="getList"></right-toolbar>
+          <el-button plain v-hasPermi="['system:user:add']" type="primary" icon="Plus" @click="handleAdd">新增</el-button>
+          <el-button plain v-hasPermi="['system:user:edit']" type="success" icon="Edit" :disabled="single" @click="handleUpdate">修改</el-button>
+          <el-button plain v-hasPermi="['system:user:remove']" type="danger" icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
+          <right-toolbar v-model:showSearch="showSearch" :columns="columns" @queryTable="getList" />
         </div>
 
         <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
@@ -173,24 +173,28 @@ import { Regular } from '@/utils/validate'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance() as any
-const formRef = ref<FormInstance>()
 const { sys_normal_disable, sys_user_sex } = proxy.useDict('sys_normal_disable', 'sys_user_sex')
+
 const deptTreeRef = ref<InstanceType<typeof ElTree>>()
+const deptName = ref('')
+/** 根据名称筛选部门树 */
+watch(deptName, val => {
+  deptTreeRef.value.filter(val)
+})
+
+/**
+ * 列表
+ */
 const list = ref<any[]>([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref<number[]>([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
-const title = ref('')
 const dateRange = ref<any>([])
-const deptName = ref('')
 const deptOptions = ref(undefined)
-const postOptions = ref<any[]>([])
-const roleOptions = ref<any[]>([])
-
+const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 // 列显隐信息
 const columns = ref([
   { key: 0, label: `用户账号`, visible: true },
@@ -201,8 +205,55 @@ const columns = ref([
   { key: 5, label: `创建时间`, visible: true }
 ])
 
+async function getList() {
+  loading.value = true
+  const res: any = await listUser(proxy.addDateRange(queryParams.value, dateRange.value))
+  loading.value = false
+  list.value = res.rows
+  total.value = res.total
+}
+
+function handleQuery() {
+  queryParams.value.pageNum = 1
+  getList()
+}
+
+function resetQuery() {
+  dateRange.value = []
+  proxy.resetForm('queryRef')
+  queryParams.value.deptId = undefined
+  deptTreeRef.value?.setCurrentKey(null as any)
+  handleQuery()
+}
+
+function handleSelectionChange(selection: any[]) {
+  ids.value = selection.map(item => item.userId)
+  single.value = selection.length !== 1
+  multiple.value = !selection.length
+}
+/** 节点单击事件 */
+function handleNodeClick(data: any) {
+  queryParams.value.deptId = data.id
+  handleQuery()
+}
+/** 通过条件过滤节点  */
+const filterNode = (value: any, data: any) => {
+  if (!value) return true
+  return data.label.indexOf(value) !== -1
+}
+/** 查询部门下拉树结构 */
+async function getDeptTree() {
+  const res: any = await deptTreeSelect()
+  deptOptions.value = res.data
+}
+
+/**
+ * 新增修改
+ */
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const title = ref('')
 const form = ref<any>({})
-const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
 const rules = ref<any>({
   userName: [
     { required: true, message: '用户账号不能为空', trigger: 'change' },
@@ -217,54 +268,62 @@ const rules = ref<any>({
   email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }],
   phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'change' }]
 })
+const postOptions = ref<any[]>([])
+const roleOptions = ref<any[]>([])
 
-/** 通过条件过滤节点  */
-const filterNode = (value: any, data: any) => {
-  if (!value) return true
-  return data.label.indexOf(value) !== -1
+function reset() {
+  form.value = { status: '0', postIds: [], roleIds: [] }
+  proxy.resetForm('formRef')
 }
-/** 根据名称筛选部门树 */
-watch(deptName, val => {
-  deptTreeRef.value.filter(val)
-})
-/** 查询部门下拉树结构 */
-async function getDeptTree() {
-  const res: any = await deptTreeSelect()
-  deptOptions.value = res.data
+
+function cancel() {
+  open.value = false
+  reset()
 }
-/** 查询用户列表 */
-async function getList() {
-  loading.value = true
-  const res: any = await listUser(proxy.addDateRange(queryParams.value, dateRange.value))
-  loading.value = false
-  list.value = res.rows
-  total.value = res.total
+
+async function handleAdd() {
+  reset()
+  const response: any = await getUser()
+  postOptions.value = response.posts
+  roleOptions.value = response.roles
+  open.value = true
+  title.value = '新增'
 }
-/** 节点单击事件 */
-function handleNodeClick(data: any) {
-  queryParams.value.deptId = data.id
-  handleQuery()
+
+async function handleUpdate(row: any) {
+  reset()
+  const response: any = await getUser(row.userId || ids.value)
+  form.value = response.data
+  postOptions.value = response.posts
+  roleOptions.value = response.roles
+  form.value.postIds = response.postIds
+  form.value.roleIds = response.roleIds
+  open.value = true
+  title.value = '修改'
+  form.value.password = ''
 }
-/** 搜索按钮操作 */
-function handleQuery() {
-  queryParams.value.pageNum = 1
+
+async function submitForm() {
+  await formRef.value.validate()
+  if (form.value.userId) {
+    await updateUser(form.value)
+    proxy.$modal.msgSuccess('修改成功')
+  } else {
+    await addUser(form.value)
+    proxy.$modal.msgSuccess('新增成功')
+  }
+  open.value = false
   getList()
 }
-/** 重置按钮操作 */
-function resetQuery() {
-  dateRange.value = []
-  proxy.resetForm('queryRef')
-  queryParams.value.deptId = undefined
-  deptTreeRef.value?.setCurrentKey(null as any)
-  handleQuery()
-}
-/** 删除按钮操作 */
+
+/**
+ * 删除
+ */
 async function handleDelete(row: any) {
-  const userIds = row.userId || ids.value
   await proxy.$modal.confirm('是否确认删除数据项？')
-  await delUser(userIds)
-  getList()
+  await delUser(row.userId || ids.value)
   proxy.$modal.msgSuccess('删除成功')
+  getList()
 }
 
 /** 用户状态修改  */
@@ -278,7 +337,6 @@ async function handleStatusChange(row: any) {
     row.status = row.status === '0' ? '1' : '0'
   }
 }
-
 /** 跳转角色分配 */
 function handleAuthRole(row: any) {
   const userId = row.userId
@@ -295,62 +353,6 @@ async function handleResetPwd(row: any) {
   })
   await resetUserPwd(row.userId, value)
   proxy.$modal.msgSuccess('修改成功，新密码是：' + value)
-}
-/** 选择条数  */
-function handleSelectionChange(selection: any[]) {
-  ids.value = selection.map(item => item.userId)
-  single.value = selection.length !== 1
-  multiple.value = !selection.length
-}
-
-/** 重置操作表单 */
-function reset() {
-  form.value = {
-    status: '0',
-    postIds: [],
-    roleIds: []
-  }
-  proxy.resetForm('formRef')
-}
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
-}
-/** 新增按钮操作 */
-async function handleAdd() {
-  reset()
-  const response: any = await getUser()
-  postOptions.value = response.posts
-  roleOptions.value = response.roles
-  open.value = true
-  title.value = '新增'
-}
-/** 修改按钮操作 */
-async function handleUpdate(row: any) {
-  reset()
-  const response: any = await getUser(row.userId || ids.value)
-  form.value = response.data
-  postOptions.value = response.posts
-  roleOptions.value = response.roles
-  form.value.postIds = response.postIds
-  form.value.roleIds = response.roleIds
-  open.value = true
-  title.value = '修改'
-  form.value.password = ''
-}
-/** 提交按钮 */
-async function submitForm() {
-  await formRef.value.validate()
-  if (form.value.userId) {
-    await updateUser(form.value)
-    proxy.$modal.msgSuccess('修改成功')
-  } else {
-    await addUser(form.value)
-    proxy.$modal.msgSuccess('新增成功')
-  }
-  open.value = false
-  getList()
 }
 
 getDeptTree()

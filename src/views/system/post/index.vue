@@ -1,14 +1,14 @@
 <template>
   <div>
-    <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
+    <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="岗位编码" prop="postCode">
-        <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable style="width: 200px" @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.postCode" placeholder="请输入岗位编码" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="岗位名称" prop="postName">
         <el-input v-model="queryParams.postName" placeholder="请输入岗位名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="岗位状态" clearable style="width: 200px">
+        <el-select v-model="queryParams.status" placeholder="岗位状态" clearable>
           <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -22,7 +22,7 @@
       <el-button v-hasPermi="['system:post:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
       <el-button v-hasPermi="['system:post:edit']" type="success" plain icon="Edit" :disabled="single" @click="handleUpdate">修改</el-button>
       <el-button v-hasPermi="['system:post:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
 
     <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
@@ -78,28 +78,20 @@
 import { listPost, addPost, delPost, getPost, updatePost } from '@/api/system/post'
 
 const { proxy } = getCurrentInstance()
-const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
+/**
+ * 列表
+ */
 const list = ref<any[]>([])
-const open = ref(false)
+const total = ref(0)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref<number[]>([])
 const single = ref(true)
 const multiple = ref(true)
-const total = ref(0)
-const title = ref('')
-
-const form = ref<any>({})
 const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
-const rules = ref<any>({
-  postName: [{ required: true, message: '岗位名称不能为空', trigger: 'change' }],
-  postCode: [{ required: true, message: '岗位编码不能为空', trigger: 'change' }],
-  postSort: [{ required: true, message: '岗位顺序不能为空', trigger: 'change' }]
-})
 
-/** 查询岗位列表 */
 async function getList() {
   loading.value = true
   const res: any = await listPost(queryParams.value)
@@ -107,39 +99,52 @@ async function getList() {
   total.value = res.total
   loading.value = false
 }
-/** 搜索按钮操作 */
+
 function handleQuery() {
   queryParams.value.pageNum = 1
   getList()
 }
-/** 重置按钮操作 */
+
 function resetQuery() {
   proxy.resetForm('queryRef')
   handleQuery()
 }
-/** 多选框选中数据 */
+
 function handleSelectionChange(selection: any[]) {
   ids.value = selection.map(item => item.postId)
   single.value = selection.length !== 1
   multiple.value = !selection.length
 }
-/** 取消按钮 */
+
+/**
+ * 新增修改
+ */
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const title = ref('')
+const form = ref<any>({})
+const rules = ref<any>({
+  postName: [{ required: true, message: '岗位名称不能为空', trigger: 'change' }],
+  postCode: [{ required: true, message: '岗位编码不能为空', trigger: 'change' }],
+  postSort: [{ required: true, message: '岗位顺序不能为空', trigger: 'change' }]
+})
+
 function cancel() {
   open.value = false
   reset()
 }
-/** 表单重置 */
+
 function reset() {
   form.value = { postSort: 0, status: '0' }
   proxy.resetForm('formRef')
 }
-/** 新增按钮操作 */
+
 function handleAdd() {
   reset()
   open.value = true
   title.value = '新增'
 }
-/** 修改按钮操作 */
+
 async function handleUpdate(row: any) {
   reset()
   const res = await getPost(row.postId || ids.value)
@@ -147,7 +152,7 @@ async function handleUpdate(row: any) {
   open.value = true
   title.value = '修改'
 }
-/** 提交按钮 */
+
 async function submitForm() {
   await formRef.value.validate()
   if (form.value.postId !== undefined) {
@@ -160,7 +165,10 @@ async function submitForm() {
   open.value = false
   getList()
 }
-/** 删除按钮操作 */
+
+/**
+ * 删除
+ */
 async function handleDelete(row: any) {
   await proxy.$modal.confirm('是否确认删除岗位?')
   await delPost(row.postId || ids.value)

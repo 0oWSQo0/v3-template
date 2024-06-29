@@ -1,16 +1,16 @@
 <template>
   <div>
-    <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
+    <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="字典名称" prop="dictType">
-        <el-select v-model="queryParams.dictType" style="width: 200px">
+        <el-select v-model="queryParams.dictType">
           <el-option v-for="item in typeOptions" :key="item.dictId" :label="item.dictName" :value="item.dictType" />
         </el-select>
       </el-form-item>
       <el-form-item label="字典标签" prop="dictLabel">
-        <el-input v-model="queryParams.dictLabel" placeholder="请输入字典标签" clearable style="width: 200px" @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.dictLabel" placeholder="请输入字典标签" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="数据状态" clearable style="width: 200px">
+        <el-select v-model="queryParams.status" placeholder="数据状态" clearable>
           <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -25,7 +25,7 @@
       <el-button v-hasPermi="['system:dict:edit']" type="success" plain icon="Edit" :disabled="single" @click="handleUpdate">修改</el-button>
       <el-button v-hasPermi="['system:dict:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
       <el-button type="warning" plain icon="Close" @click="handleClose">关闭</el-button>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
 
     <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
@@ -102,21 +102,8 @@ import { listData, getData, delData, addData, updateData } from '@/api/system/di
 import { FormInstance } from 'element-plus/es/components/form'
 
 const { proxy } = getCurrentInstance()
-const formRef = ref<FormInstance>()
-const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
-
-const list = ref<any[]>([])
-const open = ref(false)
-const loading = ref(true)
-const showSearch = ref(true)
-const ids = ref<number[]>([])
-const single = ref(true)
-const multiple = ref(true)
-const total = ref(0)
-const title = ref('')
-const defaultDictType = ref('')
-const typeOptions = ref<any[]>([])
 const route = useRoute()
+const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 // 数据标签回显样式
 const listClassOptions = ref([
   { value: 'default', label: '默认' },
@@ -127,14 +114,44 @@ const listClassOptions = ref([
   { value: 'danger', label: '危险' }
 ])
 
-const form = ref<any>({})
+/**
+ * 列表
+ */
+const list = ref<any[]>([])
+const loading = ref(true)
+const showSearch = ref(true)
+const ids = ref<number[]>([])
+const single = ref(true)
+const multiple = ref(true)
+const total = ref(0)
+const defaultDictType = ref('')
+const typeOptions = ref<any[]>([])
 const queryParams = ref<any>({ pageNum: 1, pageSize: 10 })
-const rules = ref<any>({
-  dictLabel: [{ required: true, message: '数据标签不能为空', trigger: 'change' }],
-  dictValue: [{ required: true, message: '数据键值不能为空', trigger: 'change' }],
-  dictSort: [{ required: true, message: '数据顺序不能为空', trigger: 'change' }]
-})
 
+async function getList() {
+  loading.value = true
+  const res: any = await listData(queryParams.value)
+  list.value = res.rows
+  total.value = res.total
+  loading.value = false
+}
+
+function handleQuery() {
+  queryParams.value.pageNum = 1
+  getList()
+}
+
+function resetQuery() {
+  proxy.resetForm('queryRef')
+  queryParams.value.dictType = defaultDictType
+  handleQuery()
+}
+
+function handleSelectionChange(selection: any[]) {
+  ids.value = selection.map(item => item.dictCode)
+  single.value = selection.length !== 1
+  multiple.value = !selection.length
+}
 /** 查询字典类型详细 */
 async function getTypes(dictId: any) {
   const res: any = await getType(dictId)
@@ -147,58 +164,37 @@ async function getTypeList() {
   const res = await getDictOptionselect()
   typeOptions.value = res.data
 }
-/** 查询字典数据列表 */
-async function getList() {
-  loading.value = true
-  const res: any = await listData(queryParams.value)
-  list.value = res.rows
-  total.value = res.total
-  loading.value = false
-}
-/** 取消按钮 */
+
+/**
+ * 新增修改
+ */
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const title = ref('')
+const form = ref<any>({})
+const rules = ref<any>({
+  dictLabel: [{ required: true, message: '数据标签不能为空', trigger: 'change' }],
+  dictValue: [{ required: true, message: '数据键值不能为空', trigger: 'change' }],
+  dictSort: [{ required: true, message: '数据顺序不能为空', trigger: 'change' }]
+})
+
 function cancel() {
   open.value = false
   reset()
 }
-/** 表单重置 */
+
 function reset() {
-  form.value = {
-    listClass: 'default',
-    dictSort: 0,
-    status: '0'
-  }
+  form.value = { listClass: 'default', dictSort: 0, status: '0' }
   proxy.resetForm('formRef')
 }
-/** 搜索按钮操作 */
-function handleQuery() {
-  queryParams.value.pageNum = 1
-  getList()
-}
-/** 返回按钮操作 */
-function handleClose() {
-  const obj = { path: '/system/dict' }
-  proxy.$tab.closeOpenPage(obj)
-}
-/** 重置按钮操作 */
-function resetQuery() {
-  proxy.resetForm('queryRef')
-  queryParams.value.dictType = defaultDictType
-  handleQuery()
-}
-/** 新增按钮操作 */
+
 function handleAdd() {
   reset()
   open.value = true
   title.value = '新增'
   form.value.dictType = queryParams.value.dictType
 }
-/** 多选框选中数据 */
-function handleSelectionChange(selection: any[]) {
-  ids.value = selection.map(item => item.dictCode)
-  single.value = selection.length !== 1
-  multiple.value = !selection.length
-}
-/** 修改按钮操作 */
+
 async function handleUpdate(row: any) {
   reset()
   const res: any = await getData(row.dictCode || ids.value)
@@ -206,7 +202,7 @@ async function handleUpdate(row: any) {
   open.value = true
   title.value = '修改'
 }
-/** 提交按钮 */
+
 async function submitForm() {
   await formRef.value.validate()
   if (form.value.dictCode !== undefined) {
@@ -220,13 +216,21 @@ async function submitForm() {
   open.value = false
   getList()
 }
-/** 删除按钮操作 */
+
+/**
+ * 删除
+ */
 async function handleDelete(row: any) {
   await proxy.$modal.confirm('是否确认删除字典数据项？')
   await delData(row.dictCode || ids.value)
   getList()
   proxy.$modal.msgSuccess('删除成功')
   useDictStore().removeDict(queryParams.value.dictType)
+}
+/** 返回按钮操作 */
+function handleClose() {
+  const obj = { path: '/system/dict' }
+  proxy.$tab.closeOpenPage(obj)
 }
 
 getTypes(route.params && route.params.dictId)
