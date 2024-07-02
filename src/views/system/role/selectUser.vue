@@ -1,6 +1,6 @@
 <template>
   <!-- 授权用户 -->
-  <el-dialog v-model="visible" title="选择用户" width="800px" top="5vh" append-to-body draggable>
+  <el-dialog class="queryForm" v-model="visible" title="选择用户" width="800px" top="5vh" append-to-body draggable>
     <el-form ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="用户账号" prop="userName">
         <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable style="width: 200px" @keyup.enter="handleQuery" />

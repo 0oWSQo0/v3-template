@@ -53,7 +53,6 @@ const codeUrl = ref('')
 const loading = ref(false)
 // 验证码开关
 const captchaEnabled = ref(true)
-const redirect = ref(undefined)
 const loginRef = ref<FormInstance>()
 
 async function handleLogin() {
@@ -62,7 +61,7 @@ async function handleLogin() {
   // 调用action的登录方法
   try {
     await userStore.login(loginForm.value)
-    router.push({ path: redirect.value || '/' })
+    router.push({ path: '/' })
   } catch (e: any) {
     loading.value = false
     // 重新获取验证码
