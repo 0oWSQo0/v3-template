@@ -5,7 +5,7 @@ import { getToken } from '@/utils/auth'
 import { isHttp } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
 import useUserStore from '@/store/modules/user'
-import useSettingsStore from '@/store/modules/settings'
+import useAppStore from '@/store/modules/app'
 import usePermissionStore from '@/store/modules/permission'
 
 NProgress.configure({ showSpinner: false })
@@ -15,7 +15,7 @@ const whiteList = ['/login']
 router.beforeEach(async (to, from, next) => {
   NProgress.start()
   if (getToken()) {
-    to.meta.title && useSettingsStore().setTitle(to.meta.title)
+    !useAppStore().title && useAppStore().setTitle()
     /* has token*/
     if (to.path === '/login') {
       next({ path: '/' })
@@ -25,6 +25,7 @@ router.beforeEach(async (to, from, next) => {
         isRelogin.show = true
         // 判断当前用户是否已拉取完user_info信息
         try {
+          useAppStore().setNeedKey()
           await useUserStore().getInfo()
           isRelogin.show = false
           const accessRoutes: any = await usePermissionStore().generateRoutes()

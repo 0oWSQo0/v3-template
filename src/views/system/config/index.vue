@@ -83,28 +83,18 @@
 <script setup name="Config" lang="ts">
 import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache } from '@/api/system/config'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
-const formRef = ref<FormInstance>()
+const { proxy } = getCurrentInstance()
 const { sys_yes_no } = proxy.useDict('sys_yes_no')
 
 const list = ref<any[]>([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref<number[]>([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
-const title = ref('')
 const dateRange = ref<any>([])
-
-const form = ref<any>({})
 const queryParams = ref<any>({})
-const rules = ref<any>({
-  configName: [{ required: true, message: '参数名称不能为空', trigger: 'change' }],
-  configKey: [{ required: true, message: '参数键名不能为空', trigger: 'change' }],
-  configValue: [{ required: true, message: '参数键值不能为空', trigger: 'change' }]
-})
 
 /** 查询参数列表 */
 async function getList() {
@@ -142,6 +132,17 @@ function handleSelectionChange(selection: any[]) {
   single.value = selection.length !== 1
   multiple.value = !selection.length
 }
+
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const title = ref('')
+const form = ref<any>({})
+const rules = ref<any>({
+  configName: [{ required: true, message: '参数名称不能为空' }],
+  configKey: [{ required: true, message: '参数键名不能为空' }],
+  configValue: [{ required: true, message: '参数键值不能为空' }]
+})
+
 /** 新增按钮操作 */
 function handleAdd() {
   reset()

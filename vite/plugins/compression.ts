@@ -9,8 +9,8 @@ export default function createCompression(env: Record<string, string>) {
     const compressList = VITE_BUILD_COMPRESS.split(',')
     if(compressList.includes('gzip')) {
       plugin.push(compression({
-        ext: '.br',
-        algorithm: 'brotliCompress',
+        ext: '.gz',
+        algorithm: 'gzip',
         deleteOriginFile: false
       }))
     }

@@ -27,7 +27,7 @@ $base-logo-light-title-color: #001529;
 $base-sub-menu-background:#000c17;
 $base-sub-menu-hover:#001528;
 */
-
+$base-color: #014190;
 $--color-primary: #409eff;
 $--color-success: #67c23a;
 $--color-warning: #e6a23c;
@@ -54,4 +54,5 @@ $base-sidebar-width: 200px;
   dangerColor: $--color-danger;
   infoColor: $--color-info;
   warningColor: $--color-warning;
+  baseColor: $base-color;
 }

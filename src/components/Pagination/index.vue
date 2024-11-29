@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { scrollTo } from '@/utils/scroll-to'
+import { useWindowScroll } from '@vueuse/core'
 
 interface IProps {
   total: number
@@ -58,15 +58,17 @@ const pageSize = computed({
     emit('update:limit', val)
   }
 })
+const { x, y } = useWindowScroll({ behavior: 'smooth' })
+
 function handleSizeChange(val: number) {
   if (currentPage.value * val > props.total) {
     currentPage.value = 1
   }
   emit('pagination', { page: currentPage.value, limit: val })
-  props.autoScroll && scrollTo(0, 800)
+  props.autoScroll && (y.value = 800)
 }
 function handleCurrentChange(val: number) {
   emit('pagination', { page: val, limit: pageSize.value })
-  props.autoScroll && scrollTo(0, 800)
+  props.autoScroll && (y.value = 800)
 }
 </script>

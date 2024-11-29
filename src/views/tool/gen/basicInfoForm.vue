@@ -45,9 +45,9 @@ defineExpose({
 
 // 表单校验
 const rules = ref({
-  tableName: [{ required: true, message: '请输入表名称', trigger: 'change' }],
-  tableComment: [{ required: true, message: '请输入表描述', trigger: 'change' }],
-  className: [{ required: true, message: '请输入实体类名称', trigger: 'change' }],
-  functionAuthor: [{ required: true, message: '请输入作者', trigger: 'change' }]
+  tableName: [{ required: true, message: '请输入表名称' }],
+  tableComment: [{ required: true, message: '请输入表描述' }],
+  className: [{ required: true, message: '请输入实体类名称' }],
+  functionAuthor: [{ required: true, message: '请输入作者' }]
 })
 </script>

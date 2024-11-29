@@ -337,7 +337,7 @@
                   #set($comment=$column.columnComment)
               #end
                   $column.javaField: [
-              { required: true, message: '$comment不能为空', trigger: 'change' }
+              { required: true, message: '$comment不能为空' }
             ] #if($foreach.count != $columns.size()),#end
           #end
       #end

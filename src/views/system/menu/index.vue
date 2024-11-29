@@ -249,9 +249,9 @@ const iconSelectRef = ref<any>(null)
 const form = ref<any>({})
 const queryParams = ref<any>({})
 const rules = ref<any>({
-  menuName: [{ required: true, message: '菜单名称不能为空', trigger: 'change' }],
-  orderNum: [{ required: true, message: '菜单顺序不能为空', trigger: 'change' }],
-  path: [{ required: true, message: '路由地址不能为空', trigger: 'change' }]
+  menuName: [{ required: true, message: '菜单名称不能为空' }],
+  orderNum: [{ required: true, message: '菜单顺序不能为空' }],
+  path: [{ required: true, message: '路由地址不能为空' }]
 })
 
 /** 查询菜单列表 */

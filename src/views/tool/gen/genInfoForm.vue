@@ -216,11 +216,11 @@ const props = defineProps({
 
 // 表单校验
 const rules = ref({
-  tplCategory: [{ required: true, message: '请选择生成模板', trigger: 'change' }],
-  packageName: [{ required: true, message: '请输入生成包路径', trigger: 'change' }],
-  moduleName: [{ required: true, message: '请输入生成模块名', trigger: 'change' }],
-  businessName: [{ required: true, message: '请输入生成业务名', trigger: 'change' }],
-  functionName: [{ required: true, message: '请输入生成功能名', trigger: 'change' }]
+  tplCategory: [{ required: true, message: '请选择生成模板' }],
+  packageName: [{ required: true, message: '请输入生成包路径' }],
+  moduleName: [{ required: true, message: '请输入生成模块名' }],
+  businessName: [{ required: true, message: '请输入生成业务名' }],
+  functionName: [{ required: true, message: '请输入生成功能名' }]
 })
 function subSelectChange() {
   props.info.subTableFkName = ''

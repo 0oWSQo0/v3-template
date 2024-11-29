@@ -44,6 +44,19 @@ export function getCodeImg() {
     timeout: 20000
   })
 }
+// 获取随机数
+export function randomString16(params: any) {
+  return request({ url: '/security/randomString16', params })
+}
+
+export function isNeedKey() {
+  return request({
+    url: '/security/isNeedKey',
+    headers: {
+      isToken: false
+    }
+  })
+}
 // cloud模式接口
 // import request from '@/utils/request'
 

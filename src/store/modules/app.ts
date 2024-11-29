@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { defineStore } from 'pinia'
+import { getConfigKey } from '@/api/system/config'
 
 const useAppStore = defineStore('app', {
   state: () => ({
@@ -9,7 +9,9 @@ const useAppStore = defineStore('app', {
       hide: false
     },
     device: 'desktop',
-    size: Cookies.get('size') || 'small'
+    size: Cookies.get('size') || 'small',
+    title: '',
+    needKey: false
   }),
   actions: {
     toggleSideBar(withoutAnimation?: boolean) {
@@ -38,6 +40,15 @@ const useAppStore = defineStore('app', {
     },
     toggleSideBarHide(status: boolean) {
       this.sidebar.hide = status
+    },
+    async setTitle() {
+      const { msg }: any = await getConfigKey('sys.title')
+      this.title = msg
+      useTitle(msg)
+    },
+    async setNeedKey() {
+      const { msg }: any = await getConfigKey('sys.isNeedKey')
+      this.needKey = msg === 'true'
     }
   }
 })

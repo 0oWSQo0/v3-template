@@ -210,9 +210,9 @@ const open = ref(false)
 const title = ref('')
 const form = ref<any>({})
 const rules = ref<any>({
-  roleName: [{ required: true, message: '角色名称不能为空', trigger: 'change' }],
-  roleKey: [{ required: true, message: '权限字符不能为空', trigger: 'change' }],
-  roleSort: [{ required: true, message: '角色顺序不能为空', trigger: 'change' }]
+  roleName: [{ required: true, message: '角色名称不能为空' }],
+  roleKey: [{ required: true, message: '权限字符不能为空' }],
+  roleSort: [{ required: true, message: '角色顺序不能为空' }]
 })
 const menuOptions = ref<any[]>([])
 const menuExpand = ref(false)

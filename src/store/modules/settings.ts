@@ -1,5 +1,4 @@
 import defaultSettings from '@/settings'
-import { useDynamicTitle } from '@/utils/dynamicTitle'
 import { defineStore } from 'pinia'
 
 const { sideTheme, showSettings, topNav, tagsView, fixedHeader, sidebarLogo, dynamicTitle } = defaultSettings
@@ -26,11 +25,6 @@ const useSettingsStore = defineStore('settings', {
       // Reflect.set(this, key, value)
       this[key] = value
       // }
-    },
-    // 设置网页标题
-    setTitle(title: string) {
-      this.title = title
-      useDynamicTitle()
     }
   }
 })

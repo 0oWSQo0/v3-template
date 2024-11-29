@@ -29,7 +29,7 @@ const tagsViewStore = useTagsViewStore()
 }
 
 .fixed-header + .app-main {
-  padding-top: 50px;
+  padding-top: 70px;
 }
 
 .hasTagsView {

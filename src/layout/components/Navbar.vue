@@ -31,11 +31,25 @@ import Hamburger from '@/components/Hamburger/index.vue'
 import useAppStore from '@/store/modules/app'
 import useUserStore from '@/store/modules/user'
 import useSettingsStore from '@/store/modules/settings'
+import ChangePinModal from '@/views/system/user/changePinModal.vue'
+import ChangePwdModal from '@/views/system/user/changePwdModal.vue'
+import { CheckKeyStatus } from '@/utils/BHA'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
 const { userInfo } = userStore
 const settingsStore = useSettingsStore()
+const needKey = appStore.needKey
+
+const changePinRef = ref()
+const changePwdRef = ref()
+const handleChangePin = async () => {
+  await CheckKeyStatus()
+  changePinRef.value.show()
+}
+const handleChangePwd = () => {
+  changePwdRef.value.show()
+}
 
 function toggleSideBar() {
   appStore.toggleSideBar()
@@ -43,6 +57,12 @@ function toggleSideBar() {
 
 function handleCommand(command: any) {
   switch (command) {
+    case 'handleChangePin':
+      handleChangePin()
+      break
+    case 'handleChangePwd':
+      handleChangePwd()
+      break
     case 'logout':
       logout()
       break

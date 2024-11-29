@@ -299,6 +299,9 @@
     "ElLoading": true,
     "ElMessage": true,
     "ElMessageBox": true,
-    "ElNotification": true
+    "ElNotification": true,
+    "injectLocal": true,
+    "provideLocal": true,
+    "useClipboardItems": true
   }
 }

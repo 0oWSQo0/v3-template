@@ -5,7 +5,8 @@
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-
+    "declaration": false,
+    "sourceMap": true,
     /* Bundler mode */
     "esModuleInterop": true,
     "moduleResolution": "Node",

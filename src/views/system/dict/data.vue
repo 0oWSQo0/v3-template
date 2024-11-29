@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-card>
+      <el-page-header title="返回" content="字典类型" @back="handleClose"></el-page-header>
+    </el-card>
     <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="字典名称" prop="dictType">
         <el-select v-model="queryParams.dictType">
@@ -24,7 +27,6 @@
       <el-button v-hasPermi="['system:dict:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
       <el-button v-hasPermi="['system:dict:edit']" type="success" plain icon="Edit" :disabled="single" @click="handleUpdate">修改</el-button>
       <el-button v-hasPermi="['system:dict:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
-      <el-button type="warning" plain icon="Close" @click="handleClose">关闭</el-button>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
 
@@ -99,24 +101,20 @@
 import useDictStore from '@/store/modules/dict'
 import { optionselect as getDictOptionselect, getType } from '@/api/system/dict/type'
 import { listData, getData, delData, addData, updateData } from '@/api/system/dict/data'
-import { FormInstance } from 'element-plus/es/components/form'
 
 const { proxy } = getCurrentInstance()
-const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
+const route = useRoute()
 
 const list = ref<any[]>([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref<number[]>([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
-const title = ref('')
 const defaultDictType = ref('')
 const typeOptions = ref<any[]>([])
-const route = useRoute()
 // 数据标签回显样式
 const listClassOptions = ref([
   { value: 'default', label: '默认' },
@@ -126,14 +124,7 @@ const listClassOptions = ref([
   { value: 'warning', label: '警告' },
   { value: 'danger', label: '危险' }
 ])
-
-const form = ref<any>({})
 const queryParams = ref<any>({})
-const rules = ref<any>({
-  dictLabel: [{ required: true, message: '数据标签不能为空', trigger: 'change' }],
-  dictValue: [{ required: true, message: '数据键值不能为空', trigger: 'change' }],
-  dictSort: [{ required: true, message: '数据顺序不能为空', trigger: 'change' }]
-})
 
 /** 查询字典类型详细 */
 async function getTypes(dictId: any) {
@@ -155,11 +146,34 @@ async function getList() {
   total.value = res.total
   loading.value = false
 }
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
+/** 搜索按钮操作 */
+function handleQuery() {
+  queryParams.value.pageNum = 1
+  getList()
 }
+/** 多选框选中数据 */
+function handleSelectionChange(selection: any[]) {
+  ids.value = selection.map(item => item.dictCode)
+  single.value = selection.length !== 1
+  multiple.value = !selection.length
+}
+/** 重置按钮操作 */
+function resetQuery() {
+  queryParams.value = {}
+  proxy.resetForm('queryRef')
+  queryParams.value.dictType = defaultDictType
+  handleQuery()
+}
+
+const title = ref('')
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const form = ref<any>({})
+const rules = ref<any>({
+  dictLabel: [{ required: true, message: '数据标签不能为空' }],
+  dictValue: [{ required: true, message: '数据键值不能为空' }],
+  dictSort: [{ required: true, message: '数据顺序不能为空' }]
+})
 /** 表单重置 */
 function reset() {
   form.value = {
@@ -169,22 +183,10 @@ function reset() {
   }
   proxy.resetForm('formRef')
 }
-/** 搜索按钮操作 */
-function handleQuery() {
-  queryParams.value.pageNum = 1
-  getList()
-}
-/** 返回按钮操作 */
-function handleClose() {
-  const obj = { path: '/system/dict' }
-  proxy.$tab.closeOpenPage(obj)
-}
-/** 重置按钮操作 */
-function resetQuery() {
-  queryParams.value = {}
-  proxy.resetForm('queryRef')
-  queryParams.value.dictType = defaultDictType
-  handleQuery()
+/** 取消按钮 */
+function cancel() {
+  open.value = false
+  reset()
 }
 /** 新增按钮操作 */
 function handleAdd() {
@@ -192,12 +194,6 @@ function handleAdd() {
   open.value = true
   title.value = '新增'
   form.value.dictType = queryParams.value.dictType
-}
-/** 多选框选中数据 */
-function handleSelectionChange(selection: any[]) {
-  ids.value = selection.map(item => item.dictCode)
-  single.value = selection.length !== 1
-  multiple.value = !selection.length
 }
 /** 修改按钮操作 */
 async function handleUpdate(row: any) {
@@ -230,6 +226,11 @@ async function handleDelete(row: any) {
   useDictStore().removeDict(queryParams.value.dictType)
 }
 
+/** 返回按钮操作 */
+function handleClose() {
+  const obj = { path: '/system/dict' }
+  proxy.$tab.closeOpenPage(obj)
+}
 getTypes(route.params && route.params.dictId)
 getTypeList()
 </script>

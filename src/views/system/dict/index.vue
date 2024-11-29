@@ -87,28 +87,21 @@ import useDictStore from '@/store/modules/dict'
 import { listType, getType, delType, addType, updateType, refreshCache } from '@/api/system/dict/type'
 
 const { proxy } = getCurrentInstance()
-const formRef = ref<FormInstance>()
 const { sys_normal_disable } = proxy.useDict('sys_normal_disable')
 
+/**
+ * 列表
+ */
 const list = ref<any[]>([])
-const open = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref<number[]>([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
-const title = ref('')
 const dateRange = ref<any>([])
-
-const form = ref<any>({})
 const queryParams = ref<any>({})
-const rules = ref<any>({
-  dictName: [{ required: true, message: '字典名称不能为空', trigger: 'change' }],
-  dictType: [{ required: true, message: '字典类型不能为空', trigger: 'change' }]
-})
 
-/** 查询字典类型列表 */
 async function getList() {
   loading.value = true
   const res: any = await listType(proxy.addDateRange(queryParams.value, dateRange.value))
@@ -116,41 +109,46 @@ async function getList() {
   total.value = res.total
   loading.value = false
 }
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
-}
-/** 表单重置 */
-function reset() {
-  form.value = { status: '0' }
-  proxy.resetForm('formRef')
-}
-/** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1
   getList()
 }
-/** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
   queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }
-/** 新增按钮操作 */
-function handleAdd() {
-  reset()
-  open.value = true
-  title.value = '新增'
-}
-/** 多选框选中数据 */
 function handleSelectionChange(selection: any[]) {
   ids.value = selection.map(item => item.dictId)
   single.value = selection.length !== 1
   multiple.value = !selection.length
 }
-/** 修改按钮操作 */
+
+/**
+ * 新增修改
+ */
+const formRef = ref<FormInstance>()
+const open = ref(false)
+const title = ref('')
+const form = ref<any>({})
+const rules = ref<any>({
+  dictName: [{ required: true, message: '字典名称不能为空' }],
+  dictType: [{ required: true, message: '字典类型不能为空' }]
+})
+function cancel() {
+  open.value = false
+  reset()
+}
+function reset() {
+  form.value = { status: '0' }
+  proxy.resetForm('formRef')
+}
+function handleAdd() {
+  reset()
+  open.value = true
+  title.value = '新增'
+}
 async function handleUpdate(row: any) {
   reset()
   const res = await getType(row.dictId || ids.value)
@@ -158,7 +156,6 @@ async function handleUpdate(row: any) {
   open.value = true
   title.value = '修改'
 }
-/** 提交按钮 */
 async function submitForm() {
   await formRef.value.validate()
   if (form.value.dictId != undefined) {
@@ -171,6 +168,7 @@ async function submitForm() {
   open.value = false
   getList()
 }
+
 /** 删除按钮操作 */
 async function handleDelete(row: any) {
   await proxy.$modal.confirm('是否确认删除数据项？')
