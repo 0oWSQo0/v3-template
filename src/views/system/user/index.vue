@@ -2,10 +2,10 @@
   <div>
     <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
       <el-form-item label="用户账号" prop="userName">
-        <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.userName" placeholder="请输入用户账号" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="手机号码" prop="phonenumber">
-        <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="用户状态" clearable>
@@ -28,19 +28,19 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
 
-    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
+    <el-table border show-overflow-tooltip v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column align="center" show-overflow-tooltip label="用户账号" prop="userName" />
-      <el-table-column align="center" show-overflow-tooltip label="用户昵称" prop="nickName" />
-      <el-table-column align="center" show-overflow-tooltip label="KEY编码" prop="keyCode" width="160" />
-      <el-table-column align="center" show-overflow-tooltip label="手机号码" prop="phonenumber" width="120" />
-      <el-table-column align="center" show-overflow-tooltip label="状态">
+      <el-table-column align="center" label="用户账号" prop="userName" />
+      <el-table-column align="center" label="用户昵称" prop="nickName" />
+      <el-table-column align="center" label="KEY编码" prop="keyCode" width="160" />
+      <el-table-column align="center" label="手机号码" prop="phonenumber" width="120" />
+      <el-table-column align="center" label="状态">
         <template #default="{ row }">
           <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
-      <el-table-column align="center" show-overflow-tooltip label="操作" width="300">
+      <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" label="操作" width="300">
         <template #default="{ row }">
           <template v-if="row.userId !== 1">
             <el-button link v-if="!needKey" type="primary" icon="Key" @click="handleResetPwd(row)">重置口令</el-button>
@@ -68,10 +68,10 @@
           <el-input v-model="form.userName" placeholder="请输入用户账号" maxlength="30" />
         </el-form-item>
         <el-form-item v-if="form.userId == undefined" label="用户口令" prop="password">
-          <el-input v-model="form.password" placeholder="请输入用户口令" type="password" show-password autocomplete="new-password" />
+          <el-input v-model="form.password" placeholder="请输入用户口令" type="password" show-password autocomplete="new-password" maxlength="30" />
         </el-form-item>
         <el-form-item v-if="form.userId == undefined" label="确认口令" prop="checkPassword">
-          <el-input v-model="form.checkPassword" placeholder="请输入确认口令" type="password" show-password autocomplete="new-password" />
+          <el-input v-model="form.checkPassword" placeholder="请输入确认口令" type="password" show-password autocomplete="new-password" maxlength="30" />
         </el-form-item>
         <el-form-item label="手机号码" prop="phonenumber">
           <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
@@ -87,7 +87,7 @@
       </el-form>
       <template #footer>
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </template>
     </el-dialog>
 
@@ -97,7 +97,7 @@
 </template>
 
 <script setup name="User" lang="ts">
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from '@/api/system/user'
+import { changeUserStatus, listUser, delUser, getUser, updateUser, addUser } from '@/api/system/user'
 import { Regular } from '@/utils/validate'
 import ResetPinModal from './resetPinModal.vue'
 import ResetPwdModal from './resetPwdModal.vue'
@@ -212,7 +212,7 @@ async function handleUpdate(row: any) {
   title.value = '修改'
   form.value.password = ''
 }
-async function submitForm() {
+async function submit() {
   await formRef.value.validate()
   if (form.value.userId) {
     await updateUser(form.value)

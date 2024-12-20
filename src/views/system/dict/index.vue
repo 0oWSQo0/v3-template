@@ -2,10 +2,10 @@
   <div>
     <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="字典名称" prop="dictName">
-        <el-input v-model="queryParams.dictName" placeholder="请输入字典名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.dictName" placeholder="请输入字典名称" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="字典类型" prop="dictType">
-        <el-input v-model="queryParams.dictType" placeholder="请输入字典类型" clearable style="width: 200px" @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.dictType" placeholder="请输入字典类型" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="字典状态" clearable style="width: 200px">
@@ -29,24 +29,24 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
 
-    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
+    <el-table border show-overflow-tooltip v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
-      <el-table-column align="center" show-overflow-tooltip label="字典名称" prop="dictName" />
-      <el-table-column align="center" show-overflow-tooltip label="字典类型">
+      <el-table-column align="center" label="字典名称" prop="dictName" />
+      <el-table-column align="center" label="字典类型">
         <template #default="{ row }">
           <router-link :to="'/system/dict-data/index/' + row.dictId">
             <el-link type="primary">{{ row.dictType }}</el-link>
           </router-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" show-overflow-tooltip label="状态" prop="status">
+      <el-table-column align="center" label="状态" prop="status">
         <template #default="{ row }">
           <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" show-overflow-tooltip label="备注" prop="remark" />
-      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
-      <el-table-column align="center" show-overflow-tooltip label="操作" width="140">
+      <el-table-column align="center" label="备注" prop="remark" />
+      <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" label="操作" width="140">
         <template #default="{ row }">
           <el-button link v-hasPermi="['system:dict:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
           <el-button link v-hasPermi="['system:dict:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
@@ -76,7 +76,7 @@
       </el-form>
       <template #footer>
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -156,7 +156,7 @@ async function handleUpdate(row: any) {
   open.value = true
   title.value = '修改'
 }
-async function submitForm() {
+async function submit() {
   await formRef.value.validate()
   if (form.value.dictId != undefined) {
     await updateType(form.value)

@@ -2,10 +2,10 @@
   <div>
     <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
       <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="权限字符" prop="roleKey">
-        <el-input v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="角色状态" clearable>
@@ -29,18 +29,18 @@
     </div>
 
     <!-- 表格数据 -->
-    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
+    <el-table border show-overflow-tooltip v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55" />
-      <el-table-column align="center" show-overflow-tooltip label="角色名称" prop="roleName" width="150" />
-      <el-table-column align="center" show-overflow-tooltip label="权限字符" prop="roleKey" width="150" />
-      <el-table-column align="center" show-overflow-tooltip label="显示顺序" prop="roleSort" width="100" />
-      <el-table-column align="center" show-overflow-tooltip label="状态" width="100">
+      <el-table-column align="center" label="角色名称" prop="roleName" width="150" />
+      <el-table-column align="center" label="权限字符" prop="roleKey" width="150" />
+      <el-table-column align="center" label="显示顺序" prop="roleSort" width="100" />
+      <el-table-column align="center" label="状态" width="100">
         <template #default="{ row }">
           <el-switch v-model="row.status" active-value="0" inactive-value="1" @change="handleStatusChange(row)"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
-      <el-table-column align="center" show-overflow-tooltip label="操作" :min-width="140">
+      <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" label="操作" :min-width="140">
         <template #default="{ row }">
           <el-tooltip v-if="row.roleId !== 1" content="修改" placement="top">
             <el-button link v-hasPermi="['system:role:edit']" type="primary" icon="Edit" @click="handleUpdate(row)"></el-button>
@@ -106,7 +106,7 @@
       </el-form>
       <template #footer>
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </template>
     </el-dialog>
 
@@ -269,7 +269,7 @@ async function handleUpdate(row: any) {
   title.value = '修改'
 }
 
-async function submitForm() {
+async function submit() {
   await formRef.value.validate()
   form.value.menuIds = getMenuAllCheckedKeys()
   if (form.value.roleId !== undefined) {

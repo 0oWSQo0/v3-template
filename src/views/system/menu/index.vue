@@ -2,7 +2,7 @@
   <div>
     <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="菜单名称" prop="menuName">
-        <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="菜单状态" clearable>
@@ -15,33 +15,38 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb-2">
-      <el-col :span="1.5">
-        <el-button v-hasPermi="['system:menu:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
-      </el-col>
+    <div class="mb-2 flex justify-between">
+      <el-button v-hasPermi="['system:menu:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+      <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
-    </el-row>
+    </div>
 
-    <el-table border v-if="refreshTable" v-loading="loading" :data="list" row-key="menuId" :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-      <el-table-column prop="menuName" show-overflow-tooltip label="菜单名称" width="160"></el-table-column>
-      <el-table-column align="center" show-overflow-tooltip label="图标" prop="icon" width="100">
+    <el-table
+      border
+      show-overflow-tooltip
+      v-if="refreshTable"
+      v-loading="loading"
+      :data="list"
+      row-key="menuId"
+      :default-expand-all="isExpandAll"
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+    >
+      <el-table-column prop="menuName" label="菜单名称" width="160" />
+      <el-table-column align="center" label="图标" prop="icon" width="100">
         <template #default="{ row }">
           <svg-icon :icon-class="row.icon" />
         </template>
       </el-table-column>
-      <el-table-column align="center" show-overflow-tooltip prop="orderNum" label="排序" width="60"></el-table-column>
-      <el-table-column align="center" show-overflow-tooltip prop="perms" label="权限标识"></el-table-column>
-      <el-table-column align="center" show-overflow-tooltip prop="component" label="组件路径"></el-table-column>
-      <el-table-column align="center" show-overflow-tooltip prop="status" label="状态" width="80">
+      <el-table-column align="center" prop="orderNum" label="排序" width="60" />
+      <el-table-column align="center" prop="perms" label="权限标识" />
+      <el-table-column align="center" prop="component" label="组件路径" />
+      <el-table-column align="center" prop="status" label="状态" width="80">
         <template #default="{ row }">
           <dict-tag :options="sys_normal_disable" :value="row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" show-overflow-tooltip label="创建时间" width="170" prop="createTime" />
-      <el-table-column align="center" show-overflow-tooltip label="操作" width="230">
+      <el-table-column align="center" label="创建时间" width="170" prop="createTime" />
+      <el-table-column align="center" label="操作" width="230">
         <template #default="{ row }">
           <el-button link v-hasPermi="['system:menu:edit']" type="success" icon="Edit" @click="handleUpdate(row)">修改</el-button>
           <el-button link v-hasPermi="['system:menu:add']" type="primary" icon="Plus" @click="handleAdd(row)">新增</el-button>
@@ -219,7 +224,7 @@
       </el-form>
       <template #footer>
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -344,7 +349,7 @@ async function handleUpdate(row: any) {
   title.value = '修改'
 }
 /** 提交按钮 */
-async function submitForm() {
+async function submit() {
   await formRef.value.validate()
   if (form.value.menuId !== undefined) {
     await updateMenu(form.value)

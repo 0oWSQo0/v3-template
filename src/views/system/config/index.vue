@@ -2,10 +2,10 @@
   <div>
     <el-form class="queryForm" v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
       <el-form-item label="参数名称" prop="configName">
-        <el-input v-model="queryParams.configName" placeholder="请输入参数名称" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.configName" placeholder="请输入参数名称" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="参数键名" prop="configKey">
-        <el-input v-model="queryParams.configKey" placeholder="请输入参数键名" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.configKey" placeholder="请输入参数键名" clearable maxlength="30" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="系统内置" prop="configType">
         <el-select v-model="queryParams.configType" placeholder="系统内置" clearable>
@@ -29,19 +29,19 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </div>
 
-    <el-table border v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
+    <el-table border show-overflow-tooltip v-loading="loading" :data="list" @selectionChange="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column align="center" show-overflow-tooltip label="参数名称" prop="configName" width="220" />
-      <el-table-column align="center" show-overflow-tooltip label="参数键名" prop="configKey" />
-      <el-table-column align="center" show-overflow-tooltip label="参数键值" prop="configValue" />
-      <el-table-column align="center" show-overflow-tooltip label="系统内置" prop="configType" width="80">
+      <el-table-column align="center" label="参数名称" prop="configName" width="220" />
+      <el-table-column align="center" label="参数键名" prop="configKey" />
+      <el-table-column align="center" label="参数键值" prop="configValue" />
+      <el-table-column align="center" label="系统内置" prop="configType" width="80">
         <template #default="{ row }">
           <dict-tag :options="sys_yes_no" :value="row.configType" />
         </template>
       </el-table-column>
-      <el-table-column align="center" show-overflow-tooltip label="备注" prop="remark" />
-      <el-table-column align="center" show-overflow-tooltip label="创建时间" prop="createTime" width="170" />
-      <el-table-column align="center" show-overflow-tooltip label="操作" width="140">
+      <el-table-column align="center" label="备注" prop="remark" />
+      <el-table-column align="center" label="创建时间" prop="createTime" width="170" />
+      <el-table-column align="center" label="操作" width="140">
         <template #default="{ row }">
           <el-button link v-hasPermi="['system:config:edit']" type="primary" icon="Edit" @click="handleUpdate(row)">修改</el-button>
           <el-button link v-hasPermi="['system:config:remove']" type="danger" icon="Delete" @click="handleDelete(row)">删除</el-button>
@@ -74,7 +74,7 @@
       </el-form>
       <template #footer>
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -86,6 +86,9 @@ import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache
 const { proxy } = getCurrentInstance()
 const { sys_yes_no } = proxy.useDict('sys_yes_no')
 
+/**
+ * 列表
+ */
 const list = ref<any[]>([])
 const loading = ref(true)
 const showSearch = ref(true)
@@ -96,7 +99,6 @@ const total = ref(0)
 const dateRange = ref<any>([])
 const queryParams = ref<any>({})
 
-/** 查询参数列表 */
 async function getList() {
   loading.value = true
   const res: any = await listConfig(proxy.addDateRange(queryParams.value, dateRange.value))
@@ -104,35 +106,25 @@ async function getList() {
   total.value = res.total
   loading.value = false
 }
-/** 取消按钮 */
-function cancel() {
-  open.value = false
-  reset()
-}
-/** 表单重置 */
-function reset() {
-  form.value = { configType: 'Y' }
-  proxy.resetForm('formRef')
-}
-/** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1
   getList()
 }
-/** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
   queryParams.value = {}
   proxy.resetForm('queryRef')
   handleQuery()
 }
-/** 多选框选中数据 */
 function handleSelectionChange(selection: any[]) {
   ids.value = selection.map(item => item.configId)
   single.value = selection.length !== 1
   multiple.value = !selection.length
 }
 
+/**
+ * 新增修改
+ */
 const formRef = ref<FormInstance>()
 const open = ref(false)
 const title = ref('')
@@ -143,13 +135,19 @@ const rules = ref<any>({
   configValue: [{ required: true, message: '参数键值不能为空' }]
 })
 
-/** 新增按钮操作 */
+function cancel() {
+  open.value = false
+  reset()
+}
+function reset() {
+  form.value = { configType: 'Y' }
+  proxy.resetForm('formRef')
+}
 function handleAdd() {
   reset()
   open.value = true
   title.value = '新增'
 }
-/** 修改按钮操作 */
 async function handleUpdate(row: any) {
   reset()
   const res: any = await getConfig(row.configId || ids.value)
@@ -157,8 +155,7 @@ async function handleUpdate(row: any) {
   open.value = true
   title.value = '修改'
 }
-/** 提交按钮 */
-async function submitForm() {
+async function submit() {
   await formRef.value.validate()
   if (form.value.configId) {
     await updateConfig(form.value)
@@ -170,6 +167,7 @@ async function submitForm() {
   open.value = false
   getList()
 }
+
 /** 删除按钮操作 */
 async function handleDelete(row: any) {
   await proxy.$modal.confirm('是否确认删除数据项？')
